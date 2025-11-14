@@ -218,6 +218,6 @@ For issues or questions, please open a GitHub issue.
 
 ---
 
-**Made with ✨ and lots of ☕**
+**Made with ✨ and lots of 🍵**
 
 *"Where reality bends and imagination transcends"*
