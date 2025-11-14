@@ -1,5 +1,5 @@
 // Main Application Entry Point
-// Ethereal Void Landing Page
+// Ethereal Void Landing Page - Eerie Minimal Aesthetic
 
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
@@ -7,6 +7,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { CustomCursor } from './modules/cursor.js';
 import { ScrollAnimations } from './modules/scrollAnimations.js';
 import { ThreeScene } from './modules/threeScene.js';
+import { TextScrambleManager } from './modules/textScramble.js';
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger);
@@ -17,6 +18,7 @@ class EtherealVoid {
         this.scrollAnimations = null;
         this.threeScene = null;
         this.lenis = null;
+        this.textScramble = null;
 
         this.init();
     }
@@ -31,13 +33,17 @@ class EtherealVoid {
     }
 
     setup() {
-        console.log('🌌 Ethereal Void - Initializing...');
+        console.log('🔥 Ethereal Void - Initializing...');
 
         // Initialize smooth scrolling with Lenis
         this.initSmoothScroll();
 
         // Initialize custom cursor
         this.cursor = new CustomCursor();
+
+        // Initialize text scramble effect
+        this.textScramble = new TextScrambleManager();
+        this.textScramble.init();
 
         // Initialize scroll animations
         this.scrollAnimations = new ScrollAnimations();

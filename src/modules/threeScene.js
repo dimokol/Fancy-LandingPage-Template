@@ -1,9 +1,8 @@
-// Main Three.js Scene Manager
-// Handles 3D background, particles, and interactive 3D elements
+// Main Three.js Scene Manager - Updated with Model Support
+// Eerie, minimal aesthetic with orange accents
 
 import * as THREE from 'three';
-import { fluidVertexShader, fluidFragmentShader } from '../shaders/fluidBackground.js';
-import { particleVertexShader, particleFragmentShader } from '../shaders/particleShader.js';
+import { ModelLoader, createPlaceholderModel } from './modelLoader.js';
 
 export class ThreeScene {
     constructor(canvas, cursor) {
@@ -12,13 +11,22 @@ export class ThreeScene {
 
         // Scene setup
         this.scene = new THREE.Scene();
+        this.scene.fog = new THREE.Fog(0x0d0d0d, 10, 50);
+
         this.camera = new THREE.PerspectiveCamera(
-            75,
+            60,
             window.innerWidth / window.innerHeight,
             0.1,
-            1000
+            100
         );
-        this.camera.position.z = 5;
+        this.camera.position.set(0, 0, 8);
+
+        // Smooth camera targets (FIX FOR SNAP-BACK BUG)
+        this.cameraTarget = {
+            x: 0,
+            y: 0,
+            z: 8
+        };
 
         this.renderer = new THREE.WebGLRenderer({
             canvas: this.canvas,
@@ -27,58 +35,160 @@ export class ThreeScene {
         });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer.shadowMap.enabled = true;
 
         // Time and mouse
         this.clock = new THREE.Clock();
         this.mouse = new THREE.Vector2();
         this.targetMouse = new THREE.Vector2();
 
+        // Model loader
+        this.modelLoader = new ModelLoader(this.scene, this.cursor);
+
         // 3D Objects storage
         this.objects = {
-            fluidBackground: null,
-            particles: null,
-            featureIcons: [],
-            heroSphere: null,
-            experienceVisual: null
+            mainModel: null,
+            floatingInstances: [],
+            eerieParticles: null,
+            ambientLines: []
         };
+
+        // Scroll tracking
+        this.scrollProgress = 0;
+        this.targetScrollProgress = 0;
 
         this.init();
     }
 
-    init() {
-        this.createFluidBackground();
-        this.createParticles();
-        this.createFeatureIcons();
-        this.createHeroSphere();
-        this.createExperienceVisual();
+    async init() {
+        this.createLighting();
+        await this.createMainModel();
+        this.createEerieParticles();
+        this.createAmbientLines();
 
         this.setupEventListeners();
         this.animate();
     }
 
-    createFluidBackground() {
-        const geometry = new THREE.PlaneGeometry(20, 20, 1, 1);
+    createLighting() {
+        // Ambient light - dim
+        const ambientLight = new THREE.AmbientLight(0xf5f5f0, 0.3);
+        this.scene.add(ambientLight);
 
-        const material = new THREE.ShaderMaterial({
-            vertexShader: fluidVertexShader,
-            fragmentShader: fluidFragmentShader,
-            uniforms: {
-                uTime: { value: 0 },
-                uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-                uMouse: { value: new THREE.Vector2(0.5, 0.5) },
-                uMouseInfluence: { value: 0.3 }
-            }
-        });
+        // Key light with orange tint
+        const keyLight = new THREE.DirectionalLight(0xff6b35, 1.5);
+        keyLight.position.set(5, 5, 5);
+        keyLight.castShadow = true;
+        this.scene.add(keyLight);
 
-        const mesh = new THREE.Mesh(geometry, material);
-        mesh.position.z = -5;
-        this.scene.add(mesh);
+        // Fill light - cool white
+        const fillLight = new THREE.DirectionalLight(0xf5f5f0, 0.8);
+        fillLight.position.set(-5, 0, 5);
+        this.scene.add(fillLight);
 
-        this.objects.fluidBackground = mesh;
+        // Rim light - orange
+        const rimLight = new THREE.PointLight(0xff6b35, 2, 20);
+        rimLight.position.set(0, 5, -5);
+        this.scene.add(rimLight);
     }
 
-    createParticles() {
-        const count = 500;
+    async createMainModel() {
+        try {
+            // Try to load the lion totem model
+            const model = await this.modelLoader.loadModel('/models/lion_totem.glb', {
+                name: 'lionTotem',
+                scale: 2.0,
+                position: [0, 0, 0],
+                color: 0xf5f5f0
+            });
+
+            this.objects.mainModel = model;
+
+            // Try to load additional shapes for floating instances
+            const shapes = [];
+            for (let i = 1; i <= 4; i++) {
+                try {
+                    const shape = await this.modelLoader.loadModel(`/models/shape_0${i}.glb`, {
+                        name: `shape${i}`,
+                        scale: 0.5
+                    });
+                    shapes.push(shape);
+                } catch (e) {
+                    // Use placeholder if model not found
+                    const types = ['cube', 'sphere', 'torus', 'octahedron'];
+                    const placeholder = createPlaceholderModel(types[i - 1]);
+                    this.scene.add(placeholder);
+                    shapes.push(placeholder);
+                }
+            }
+
+            // Create floating instances
+            if (shapes.length > 0) {
+                this.objects.floatingInstances = this.modelLoader.createFloatingInstances(
+                    shapes[0],
+                    8,
+                    6
+                );
+            }
+
+        } catch (error) {
+            console.log('Using placeholder models');
+
+            // Create placeholder lion
+            const lionPlaceholder = createPlaceholderModel('lion', 0xf5f5f0);
+            lionPlaceholder.scale.set(2, 2, 2);
+            this.scene.add(lionPlaceholder);
+            this.objects.mainModel = lionPlaceholder;
+
+            // Create placeholder shapes for floating instances
+            const shapes = ['cube', 'sphere', 'torus', 'octahedron'];
+            const instances = [];
+
+            shapes.forEach((type, i) => {
+                const shape = createPlaceholderModel(type);
+                const count = 2;
+
+                for (let j = 0; j < count; j++) {
+                    const instance = shape.clone();
+
+                    // Position in orbit
+                    const angle = ((i * count + j) / (shapes.length * count)) * Math.PI * 2;
+                    const radius = 5 + Math.random() * 2;
+
+                    instance.position.set(
+                        Math.cos(angle) * radius,
+                        (Math.random() - 0.5) * 4,
+                        Math.sin(angle) * radius
+                    );
+
+                    const scale = 0.3 + Math.random() * 0.2;
+                    instance.scale.set(scale, scale, scale);
+
+                    instances.push({
+                        mesh: instance,
+                        originalPosition: instance.position.clone(),
+                        originalRotation: instance.rotation.clone(),
+                        rotationSpeed: {
+                            x: (Math.random() - 0.5) * 0.02,
+                            y: (Math.random() - 0.5) * 0.02,
+                            z: (Math.random() - 0.5) * 0.02
+                        },
+                        floatOffset: Math.random() * Math.PI * 2,
+                        flipSpeed: 0,
+                        flipAxis: new THREE.Vector3(0, 1, 0)
+                    });
+
+                    this.scene.add(instance);
+                }
+            });
+
+            this.objects.floatingInstances = instances;
+        }
+    }
+
+    createEerieParticles() {
+        // Create abstract, minimal particle system
+        const count = 150;  // Fewer particles for minimal look
         const geometry = new THREE.BufferGeometry();
 
         const positions = new Float32Array(count * 3);
@@ -88,12 +198,16 @@ export class ThreeScene {
         for (let i = 0; i < count; i++) {
             const i3 = i * 3;
 
-            // Spread particles in a volume
-            positions[i3] = (Math.random() - 0.5) * 20;
-            positions[i3 + 1] = (Math.random() - 0.5) * 20;
-            positions[i3 + 2] = (Math.random() - 0.5) * 10;
+            // Spread in a larger volume for eerie effect
+            const radius = 8 + Math.random() * 12;
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos((Math.random() * 2) - 1);
 
-            scales[i] = Math.random();
+            positions[i3] = radius * Math.sin(phi) * Math.cos(theta);
+            positions[i3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+            positions[i3 + 2] = radius * Math.cos(phi);
+
+            scales[i] = Math.random() * 0.5 + 0.5;
 
             randomness[i3] = Math.random();
             randomness[i3 + 1] = Math.random();
@@ -104,144 +218,53 @@ export class ThreeScene {
         geometry.setAttribute('aScale', new THREE.BufferAttribute(scales, 1));
         geometry.setAttribute('aRandomness', new THREE.BufferAttribute(randomness, 3));
 
-        const material = new THREE.ShaderMaterial({
-            vertexShader: particleVertexShader,
-            fragmentShader: particleFragmentShader,
-            uniforms: {
-                uTime: { value: 0 },
-                uSize: { value: 8.0 },
-                uMouse: { value: new THREE.Vector2(0, 0) }
-            },
+        // Simple point material - orange
+        const material = new THREE.PointsMaterial({
+            size: 0.08,
+            color: 0xff6b35,
             transparent: true,
-            depthWrite: false,
-            blending: THREE.AdditiveBlending
+            opacity: 0.4,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false
         });
 
         const particles = new THREE.Points(geometry, material);
         this.scene.add(particles);
 
-        this.objects.particles = particles;
+        this.objects.eerieParticles = particles;
     }
 
-    createFeatureIcons() {
-        const iconTypes = [
-            { type: 'cube', geometry: new THREE.BoxGeometry(1, 1, 1) },
-            { type: 'sphere', geometry: new THREE.SphereGeometry(0.6, 32, 32) },
-            { type: 'torus', geometry: new THREE.TorusGeometry(0.5, 0.2, 16, 100) },
-            { type: 'octahedron', geometry: new THREE.OctahedronGeometry(0.7) }
-        ];
+    createAmbientLines() {
+        // Create abstract line geometries for eerie atmosphere
+        for (let i = 0; i < 15; i++) {
+            const points = [];
+            const segmentCount = 20;
 
-        const iconContainers = document.querySelectorAll('.icon-3d');
+            for (let j = 0; j < segmentCount; j++) {
+                const t = j / (segmentCount - 1);
+                const angle = t * Math.PI * 4 + i;
+                const radius = 3 + i * 0.3;
 
-        iconContainers.forEach((container, index) => {
-            const iconType = container.dataset.icon;
-            const iconData = iconTypes.find(t => t.type === iconType) || iconTypes[0];
+                points.push(new THREE.Vector3(
+                    Math.cos(angle) * radius,
+                    (t - 0.5) * 10,
+                    Math.sin(angle) * radius
+                ));
+            }
 
-            // Create mini scene for each icon
-            const miniScene = new THREE.Scene();
-            const miniCamera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
-            miniCamera.position.z = 3;
-
-            // Create material with gradient effect
-            const material = new THREE.MeshStandardMaterial({
-                color: 0x00d4ff,
-                emissive: 0x8b5cf6,
-                emissiveIntensity: 0.5,
-                metalness: 0.8,
-                roughness: 0.2
+            const geometry = new THREE.BufferGeometry().setFromPoints(points);
+            const material = new THREE.LineBasicMaterial({
+                color: 0xff6b35,
+                transparent: true,
+                opacity: 0.05 + Math.random() * 0.1
             });
 
-            const mesh = new THREE.Mesh(iconData.geometry, material);
-            miniScene.add(mesh);
+            const line = new THREE.Line(geometry, material);
+            line.userData.rotationSpeed = (Math.random() - 0.5) * 0.001;
+            this.scene.add(line);
 
-            // Lighting
-            const light1 = new THREE.PointLight(0xff006e, 2, 10);
-            light1.position.set(2, 2, 2);
-            miniScene.add(light1);
-
-            const light2 = new THREE.PointLight(0x00d4ff, 2, 10);
-            light2.position.set(-2, -2, 2);
-            miniScene.add(light2);
-
-            // Create renderer for this icon
-            const miniCanvas = document.createElement('canvas');
-            const miniRenderer = new THREE.WebGLRenderer({
-                canvas: miniCanvas,
-                alpha: true,
-                antialias: true
-            });
-            miniRenderer.setSize(80, 80);
-            miniRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-            container.appendChild(miniCanvas);
-
-            this.objects.featureIcons.push({
-                scene: miniScene,
-                camera: miniCamera,
-                renderer: miniRenderer,
-                mesh: mesh,
-                container: container
-            });
-        });
-    }
-
-    createHeroSphere() {
-        const geometry = new THREE.IcosahedronGeometry(2, 4);
-
-        // Create custom material with wireframe overlay
-        const material = new THREE.MeshStandardMaterial({
-            color: 0x8b5cf6,
-            emissive: 0x00d4ff,
-            emissiveIntensity: 0.3,
-            metalness: 0.9,
-            roughness: 0.1,
-            wireframe: false
-        });
-
-        const mesh = new THREE.Mesh(geometry, material);
-
-        // Wireframe overlay
-        const wireframeGeometry = new THREE.WireframeGeometry(geometry);
-        const wireframeMaterial = new THREE.LineBasicMaterial({
-            color: 0xff006e,
-            transparent: true,
-            opacity: 0.3
-        });
-        const wireframe = new THREE.LineSegments(wireframeGeometry, wireframeMaterial);
-        mesh.add(wireframe);
-
-        // Add lights
-        const light1 = new THREE.PointLight(0x00d4ff, 3, 20);
-        light1.position.set(5, 5, 5);
-        this.scene.add(light1);
-
-        const light2 = new THREE.PointLight(0xff006e, 3, 20);
-        light2.position.set(-5, -5, 5);
-        this.scene.add(light2);
-
-        mesh.position.set(0, 0, 0);
-        this.scene.add(mesh);
-
-        this.objects.heroSphere = mesh;
-    }
-
-    createExperienceVisual() {
-        // Create a morphing torus knot for the experience section
-        const geometry = new THREE.TorusKnotGeometry(1, 0.3, 100, 16);
-
-        const material = new THREE.MeshStandardMaterial({
-            color: 0xd946ff,
-            emissive: 0x00d4ff,
-            emissiveIntensity: 0.4,
-            metalness: 0.8,
-            roughness: 0.2
-        });
-
-        const mesh = new THREE.Mesh(geometry, material);
-        mesh.position.set(3, 0, -2);
-
-        this.scene.add(mesh);
-        this.objects.experienceVisual = mesh;
+            this.objects.ambientLines.push(line);
+        }
     }
 
     setupEventListeners() {
@@ -258,103 +281,84 @@ export class ThreeScene {
 
             this.renderer.setSize(window.innerWidth, window.innerHeight);
             this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-            if (this.objects.fluidBackground) {
-                this.objects.fluidBackground.material.uniforms.uResolution.value.set(
-                    window.innerWidth,
-                    window.innerHeight
-                );
-            }
         });
     }
 
+    // FIXED: Smooth camera updates instead of direct position setting
     updateOnScroll(scrollProgress) {
-        // Move camera based on scroll
-        this.camera.position.y = -scrollProgress * 10;
+        // Update target instead of directly setting position
+        this.targetScrollProgress = scrollProgress;
 
-        // Rotate hero sphere
-        if (this.objects.heroSphere) {
-            this.objects.heroSphere.rotation.y = scrollProgress * Math.PI * 2;
-        }
-
-        // Move experience visual
-        if (this.objects.experienceVisual) {
-            this.objects.experienceVisual.position.y = Math.sin(scrollProgress * Math.PI) * 2;
-        }
+        // Update model loader scroll speed for animations
+        this.modelLoader.updateScrollSpeed(window.scrollY);
     }
 
     animate() {
         requestAnimationFrame(() => this.animate());
 
         const elapsedTime = this.clock.getElapsedTime();
+        const deltaTime = this.clock.getDelta();
 
         // Smooth mouse lerp
         this.mouse.x += (this.targetMouse.x - this.mouse.x) * 0.05;
         this.mouse.y += (this.targetMouse.y - this.mouse.y) * 0.05;
 
-        // Update fluid background
-        if (this.objects.fluidBackground) {
-            const material = this.objects.fluidBackground.material;
-            material.uniforms.uTime.value = elapsedTime;
+        // Smooth scroll lerp (FIX FOR SNAP-BACK BUG)
+        this.scrollProgress += (this.targetScrollProgress - this.scrollProgress) * 0.08;
 
-            const cursorPos = this.cursor.getPosition();
-            material.uniforms.uMouse.value.set(cursorPos.x, 1.0 - cursorPos.y);
+        // Smooth camera movement based on scroll
+        this.cameraTarget.y = -this.scrollProgress * 8;
+        this.cameraTarget.x = this.mouse.x * 0.5;
+
+        // Apply camera movement smoothly
+        this.camera.position.x += (this.cameraTarget.x - this.camera.position.x) * 0.05;
+        this.camera.position.y += (this.cameraTarget.y - this.camera.position.y) * 0.05;
+
+        // Subtle camera rotation based on mouse
+        this.camera.rotation.y = this.mouse.x * 0.05;
+        this.camera.rotation.x = -this.mouse.y * 0.03;
+
+        // Animate main model
+        if (this.objects.mainModel) {
+            // Slow rotation
+            this.objects.mainModel.rotation.y += 0.002;
+
+            // Subtle floating
+            this.objects.mainModel.position.y = Math.sin(elapsedTime * 0.3) * 0.3;
+
+            // Respond to mouse
+            this.objects.mainModel.rotation.x = this.mouse.y * 0.1;
+
+            // Scale based on scroll (zoom effect)
+            const scrollScale = 1 + this.scrollProgress * 0.3;
+            this.objects.mainModel.scale.setScalar(2.0 * scrollScale);
         }
 
-        // Update particles
-        if (this.objects.particles) {
-            const material = this.objects.particles.material;
-            material.uniforms.uTime.value = elapsedTime;
-            material.uniforms.uMouse.value.set(this.mouse.x, this.mouse.y);
-
-            this.objects.particles.rotation.y = elapsedTime * 0.05;
+        // Animate floating instances
+        if (this.objects.floatingInstances.length > 0) {
+            this.modelLoader.updateFloatingInstances(
+                this.objects.floatingInstances,
+                elapsedTime,
+                this.scrollProgress
+            );
         }
 
-        // Animate hero sphere
-        if (this.objects.heroSphere) {
-            this.objects.heroSphere.rotation.x = elapsedTime * 0.2;
-            this.objects.heroSphere.rotation.y = elapsedTime * 0.3;
+        // Animate eerie particles
+        if (this.objects.eerieParticles) {
+            this.objects.eerieParticles.rotation.y = elapsedTime * 0.02;
 
-            // Float animation
-            this.objects.heroSphere.position.y = Math.sin(elapsedTime * 0.5) * 0.3;
-
-            // Mouse interaction
-            this.objects.heroSphere.rotation.x += this.mouse.y * 0.02;
-            this.objects.heroSphere.rotation.y += this.mouse.x * 0.02;
+            // Subtle pulsing
+            const pulse = Math.sin(elapsedTime) * 0.2 + 0.8;
+            this.objects.eerieParticles.material.opacity = 0.3 * pulse;
         }
 
-        // Animate experience visual
-        if (this.objects.experienceVisual) {
-            this.objects.experienceVisual.rotation.x = elapsedTime * 0.3;
-            this.objects.experienceVisual.rotation.y = elapsedTime * 0.2;
-        }
-
-        // Animate feature icons
-        this.objects.featureIcons.forEach((icon, index) => {
-            icon.mesh.rotation.x = elapsedTime * 0.5 + index;
-            icon.mesh.rotation.y = elapsedTime * 0.3 + index;
-
-            // Check if hovered
-            const rect = icon.container.getBoundingClientRect();
-            const mouseX = this.cursor.mouseX;
-            const mouseY = this.cursor.mouseY;
-
-            const isHovered = mouseX >= rect.left && mouseX <= rect.right &&
-                            mouseY >= rect.top && mouseY <= rect.bottom;
-
-            if (isHovered) {
-                icon.mesh.scale.lerp(new THREE.Vector3(1.2, 1.2, 1.2), 0.1);
-            } else {
-                icon.mesh.scale.lerp(new THREE.Vector3(1, 1, 1), 0.1);
-            }
-
-            icon.renderer.render(icon.scene, icon.camera);
+        // Animate ambient lines
+        this.objects.ambientLines.forEach(line => {
+            line.rotation.y += line.userData.rotationSpeed;
         });
 
-        // Camera subtle movement
-        this.camera.position.x = this.mouse.x * 0.5;
-        this.camera.position.y += (this.mouse.y * 0.5 - this.camera.position.y) * 0.05;
-        this.camera.lookAt(this.scene.position);
+        // Update model animations
+        this.modelLoader.update(deltaTime);
 
         this.renderer.render(this.scene, this.camera);
     }
