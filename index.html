@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethereal Void - Experience the Future</title>
+    <link rel="stylesheet" href="/src/styles/main.css">
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="cursor">
+        <div class="cursor-inner"></div>
+    </div>
+    <div class="cursor-trail"></div>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+        <div class="progress-fill"></div>
+        <div class="progress-particles"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-logo">
+            <span class="glitch" data-text="ETHEREAL">ETHEREAL</span>
+        </div>
+        <div class="nav-menu">
+            <a href="#home" class="nav-link">Home</a>
+            <a href="#features" class="nav-link">Features</a>
+            <a href="#experience" class="nav-link">Experience</a>
+            <a href="#contact" class="nav-link">Contact</a>
+        </div>
+    </nav>
+
+    <!-- Three.js Canvas Background -->
+    <canvas id="webgl-canvas"></canvas>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section id="home" class="section hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="word" data-word="Enter" data-scramble data-scramble-ja="入る">Enter</span>
+                    <span class="word" data-word="The" data-scramble>The</span>
+                    <span class="word" data-word="Void" data-scramble data-scramble-ja="虚空">Void</span>
+                </h1>
+                <p class="hero-subtitle" data-scramble>
+                    Where reality bends and imagination transcends
+                </p>
+                <div class="hero-cta">
+                    <button class="cta-button primary">
+                        <span class="button-text">Explore Now</span>
+                        <span class="button-overlay"></span>
+                    </button>
+                    <button class="cta-button secondary">
+                        <span class="button-text">Learn More</span>
+                        <span class="button-overlay"></span>
+                    </button>
+                </div>
+            </div>
+            <div class="hero-3d-object" id="hero-sphere"></div>
+            <div class="floating-particles"></div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="section features-section">
+            <h2 class="section-title">
+                <span class="title-line" data-scramble data-scramble-ja="超越的" data-scramble-hover>Transcendent</span>
+                <span class="title-line" data-scramble data-scramble-ja="特徴" data-scramble-hover>Features</span>
+            </h2>
+
+            <div class="features-grid">
+                <div class="feature-card" data-tilt>
+                    <div class="feature-icon">
+                        <div class="icon-3d" data-icon="cube"></div>
+                    </div>
+                    <h3 class="feature-title" data-scramble data-scramble-ja="没入型3D" data-scramble-hover>Immersive 3D</h3>
+                    <p class="feature-description">
+                        Experience depth like never before with cutting-edge WebGL technology that pushes boundaries.
+                    </p>
+                    <div class="feature-hover-effect"></div>
+                </div>
+
+                <div class="feature-card" data-tilt>
+                    <div class="feature-icon">
+                        <div class="icon-3d" data-icon="sphere"></div>
+                    </div>
+                    <h3 class="feature-title">Fluid Interactions</h3>
+                    <p class="feature-description">
+                        Every movement creates ripples in the digital fabric, responding to your presence intuitively.
+                    </p>
+                    <div class="feature-hover-effect"></div>
+                </div>
+
+                <div class="feature-card" data-tilt>
+                    <div class="feature-icon">
+                        <div class="icon-3d" data-icon="torus"></div>
+                    </div>
+                    <h3 class="feature-title">Ethereal Design</h3>
+                    <p class="feature-description">
+                        A harmonious blend of vibrant energy and mysterious elegance that captivates the senses.
+                    </p>
+                    <div class="feature-hover-effect"></div>
+                </div>
+
+                <div class="feature-card" data-tilt>
+                    <div class="feature-icon">
+                        <div class="icon-3d" data-icon="octahedron"></div>
+                    </div>
+                    <h3 class="feature-title">Scroll Magic</h3>
+                    <p class="feature-description">
+                        Navigate through dimensions as scroll transforms the environment in mesmerizing ways.
+                    </p>
+                    <div class="feature-hover-effect"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Experience Section -->
+        <section id="experience" class="section experience-section">
+            <div class="experience-content">
+                <div class="experience-text">
+                    <h2 class="section-title">
+                        <span class="title-line">An Experience</span>
+                        <span class="title-line">Beyond Reality</span>
+                    </h2>
+                    <p class="experience-description">
+                        Step into a realm where digital artistry meets cutting-edge technology.
+                        Our platform creates an atmosphere that's both hauntingly beautiful and
+                        vibrantly alive, challenging the boundaries of what's possible on the web.
+                    </p>
+                    <div class="experience-stats">
+                        <div class="stat-item">
+                            <span class="stat-number" data-count="60">0</span>
+                            <span class="stat-label">FPS Performance</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" data-count="100">0</span>
+                            <span class="stat-label">3D Elements</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" data-count="1000">0</span>
+                            <span class="stat-label">Particles</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="experience-visual">
+                    <div class="visual-3d-container" id="experience-visual"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gallery Section -->
+        <section class="section gallery-section">
+            <h2 class="section-title">
+                <span class="title-line">Visual</span>
+                <span class="title-line">Journey</span>
+            </h2>
+            <div class="gallery-grid">
+                <div class="gallery-item" data-index="0">
+                    <div class="gallery-image-wrapper">
+                        <div class="gallery-distortion"></div>
+                    </div>
+                    <span class="gallery-label">Dimension 01</span>
+                </div>
+                <div class="gallery-item" data-index="1">
+                    <div class="gallery-image-wrapper">
+                        <div class="gallery-distortion"></div>
+                    </div>
+                    <span class="gallery-label">Dimension 02</span>
+                </div>
+                <div class="gallery-item" data-index="2">
+                    <div class="gallery-image-wrapper">
+                        <div class="gallery-distortion"></div>
+                    </div>
+                    <span class="gallery-label">Dimension 03</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="section contact-section">
+            <div class="contact-content">
+                <h2 class="section-title">
+                    <span class="title-line">Enter</span>
+                    <span class="title-line">The Portal</span>
+                </h2>
+                <p class="contact-subtitle">Ready to transcend? Let's connect.</p>
+                <form class="contact-form">
+                    <div class="form-group">
+                        <input type="text" class="form-input" placeholder="Your Name" required>
+                        <div class="input-line"></div>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" class="form-input" placeholder="Your Email" required>
+                        <div class="input-line"></div>
+                    </div>
+                    <div class="form-group">
+                        <textarea class="form-input" rows="5" placeholder="Your Message" required></textarea>
+                        <div class="input-line"></div>
+                    </div>
+                    <button type="submit" class="cta-button primary">
+                        <span class="button-text">Send Message</span>
+                        <span class="button-overlay"></span>
+                    </button>
+                </form>
+            </div>
+            <div class="contact-3d" id="contact-visual"></div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p class="footer-text">© 2025 Ethereal Void. Transcending Reality.</p>
+            <div class="footer-links">
+                <a href="#" class="footer-link">Privacy</a>
+                <a href="#" class="footer-link">Terms</a>
+                <a href="#" class="footer-link">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module" src="/src/main.js"></script>
+</body>
+</html>
