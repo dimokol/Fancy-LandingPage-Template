@@ -14,14 +14,20 @@ export class CustomCursor {
         this.trailX = this.mouseX;
         this.trailY = this.mouseY;
 
+        // Physics-based velocity for smooth movement
+        this.velocityX = 0;
+        this.velocityY = 0;
+        this.friction = 0.85;
+
         this.hoveredElement = null;
+        this.magneticElements = [];
         this.idleTime = 0;
         this.isIdle = false;
         this.lastMoveTime = Date.now();
 
         // Cursor particles for trail effect
         this.particles = [];
-        this.maxParticles = 20;
+        this.maxParticles = 15;
 
         // Create cursor particles
         for (let i = 0; i < this.maxParticles; i++) {
@@ -61,12 +67,14 @@ export class CustomCursor {
             this.idleTime = 0;
         });
 
-        // Detect hover on interactive elements
-        const interactiveElements = document.querySelectorAll(
-            'a, button, .feature-card, .gallery-item, .nav-link, .form-input, [data-cursor-text]'
-        );
+        // Find all magnetic elements (interactive elements with physics-based attraction)
+        const magneticSelectors = 'a, button, .feature-card, .gallery-item, .nav-link, .cta-button, .form-input, [data-magnetic]';
+        const magneticElements = document.querySelectorAll(magneticSelectors);
 
-        interactiveElements.forEach(el => {
+        magneticElements.forEach(el => {
+            // Store reference for magnetic effects
+            this.magneticElements.push(el);
+
             el.addEventListener('mouseenter', () => {
                 this.cursor.classList.add('hover');
                 this.hoveredElement = el;
@@ -76,12 +84,41 @@ export class CustomCursor {
                 if (cursorText) {
                     this.showCursorText(cursorText);
                 }
+
+                // Apply magnetic effect to the element itself
+                el.dataset.magneticActive = 'true';
             });
 
             el.addEventListener('mouseleave', () => {
                 this.cursor.classList.remove('hover');
                 this.hoveredElement = null;
                 this.hideCursorText();
+
+                el.dataset.magneticActive = 'false';
+                // Reset element position smoothly
+                if (el.style.transform) {
+                    el.style.transition = 'transform 0.5s cubic-bezier(0.23, 1, 0.32, 1)';
+                    el.style.transform = '';
+                    setTimeout(() => {
+                        el.style.transition = '';
+                    }, 500);
+                }
+            });
+
+            // Track mouse movement over magnetic elements for distortion effect
+            el.addEventListener('mousemove', (e) => {
+                if (el.dataset.magneticActive === 'true') {
+                    const rect = el.getBoundingClientRect();
+                    const centerX = rect.left + rect.width / 2;
+                    const centerY = rect.top + rect.height / 2;
+
+                    const deltaX = e.clientX - centerX;
+                    const deltaY = e.clientY - centerY;
+
+                    // Apply subtle distortion to the element itself
+                    const strength = 0.2;
+                    el.style.transform = `translate(${deltaX * strength}px, ${deltaY * strength}px)`;
+                }
             });
         });
 
@@ -178,26 +215,13 @@ export class CustomCursor {
     }
 
     animate() {
-        // Smooth cursor follow with easing
-        const ease = 0.12;
-        this.cursorX += (this.mouseX - this.cursorX) * ease;
-        this.cursorY += (this.mouseY - this.cursorY) * ease;
+        // Calculate target position with magnetic attraction
+        let targetX = this.mouseX;
+        let targetY = this.mouseY;
 
-        // Trail follows with more lag
-        const trailEase = 0.06;
-        this.trailX += (this.mouseX - this.trailX) * trailEase;
-        this.trailY += (this.mouseY - this.trailY) * trailEase;
-
-        // Apply positions
-        this.cursor.style.left = `${this.cursorX}px`;
-        this.cursor.style.top = `${this.cursorY}px`;
-
-        this.cursorTrail.style.left = `${this.trailX}px`;
-        this.cursorTrail.style.top = `${this.trailY}px`;
-
-        // Magnetic effect when hovering
-        if (this.hoveredElement) {
-            const rect = this.hoveredElement.getBoundingClientRect();
+        // Physics-based magnetic attraction with distance-based falloff
+        this.magneticElements.forEach(el => {
+            const rect = el.getBoundingClientRect();
             const elementCenterX = rect.left + rect.width / 2;
             const elementCenterY = rect.top + rect.height / 2;
 
@@ -205,15 +229,58 @@ export class CustomCursor {
             const deltaY = elementCenterY - this.mouseY;
             const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
-            if (distance < 150) {
-                const pull = (150 - distance) / 150 * 0.25;
-                this.cursorX += deltaX * pull;
-                this.cursorY += deltaY * pull;
+            // Magnetic attraction zone
+            const maxDistance = 200;
+            const minDistance = 50;
+
+            if (distance < maxDistance) {
+                // Distance-based falloff (stronger when closer)
+                const distanceRatio = Math.max(0, (maxDistance - distance) / maxDistance);
+                const strength = distanceRatio * distanceRatio;  // Quadratic falloff
+
+                // Increase pull when very close
+                let pullStrength = strength * 0.15;
+                if (distance < minDistance) {
+                    pullStrength = 0.35;
+                }
+
+                // Apply magnetic force
+                targetX += deltaX * pullStrength;
+                targetY += deltaY * pullStrength;
             }
-        }
+        });
+
+        // Physics-based smooth movement with velocity
+        const spring = 0.15;
+        const dx = targetX - this.cursorX;
+        const dy = targetY - this.cursorY;
+
+        this.velocityX += dx * spring;
+        this.velocityY += dy * spring;
+
+        // Apply friction
+        this.velocityX *= this.friction;
+        this.velocityY *= this.friction;
+
+        // Update position
+        this.cursorX += this.velocityX;
+        this.cursorY += this.velocityY;
+
+        // Trail follows with more lag
+        const trailEase = 0.08;
+        this.trailX += (this.cursorX - this.trailX) * trailEase;
+        this.trailY += (this.cursorY - this.trailY) * trailEase;
+
+        // Apply positions - FIX: center exactly on cursor position
+        this.cursor.style.left = `${this.cursorX}px`;
+        this.cursor.style.top = `${this.cursorY}px`;
+
+        this.cursorTrail.style.left = `${this.trailX}px`;
+        this.cursorTrail.style.top = `${this.trailY}px`;
 
         // Create trail effect particles (only when moving)
-        if (!this.isIdle && Math.abs(this.mouseX - this.cursorX) > 1) {
+        const speed = Math.sqrt(this.velocityX * this.velocityX + this.velocityY * this.velocityY);
+        if (!this.isIdle && speed > 0.5) {
             this.updateTrailParticles();
         }
 
