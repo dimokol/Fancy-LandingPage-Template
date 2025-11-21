@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const totalSlides = 7;
+  const totalSlides = 9;
   let currentSlide = 1;
   let isAnimating = false;
   let scrollAllowed = true;
@@ -7,20 +7,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const slideTitles = [
     "Silent Geometry",
+    "Soft Abstract",
+    "Nordic Plain",
+    "Soft Horizon",
+    "Vivid Balance",
     "Urban Stillness",
     "Elemental Flow",
-    "Vivid Balance",
-    "Soft Horizon",
     "Verdant Haven",
     "Sage Line",
   ];
 
   const slideDescriptions = [
     "Focused design that elevates your space.",
+    "Warm design shaped to express your style.",
+    "Clean structure shaped for your vision.",
+    "Clean vision shaped for your goals.",
+    "Bold ideas shaped into clear identity.",
     "Natural detail shaped into refined comfort.",
     "Strong character shaped for your vision.",
-    "Bold ideas shaped into clear identity.",
-    "Clean vision shaped for your goals.",
     "Living concepts shaped into fresh identity.",
     "Refined direction for your space.",
   ];
