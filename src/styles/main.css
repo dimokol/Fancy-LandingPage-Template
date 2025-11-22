@@ -104,7 +104,6 @@ body {
     animation: rotateCursorText 12s linear infinite;
     transform-origin: 50% 50%;
     will-change: transform;
-    filter: invert(1);
 }
 
 @keyframes rotateCursorText {
