@@ -1,9 +1,30 @@
 /* ===================================
    ETHEREAL VOID - Main Stylesheet
-   Eerie, Minimal, Abstract, Powerful
+   Awe, Minimal, Mysterious, Japanese, Powerful, Unique
    =================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Bebas+Neue&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+/* Custom Japanese Fonts */
+@font-face {
+    font-family: 'Asakusa';
+    src: url('/fonts/Asakusa Japanese Display Font/Asakusa.woff') format('woff'),
+         url('/fonts/Asakusa Japanese Display Font/Asakusa.otf') format('opentype'),
+         url('/fonts/Asakusa Japanese Display Font/Asakusa.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Ginjo';
+    src: url('/fonts/Ginjo - 3 Modern Japanese Font/WOFF/Ginjo-Regular.woff2') format('woff2'),
+         url('/fonts/Ginjo - 3 Modern Japanese Font/WOFF/Ginjo-Regular.woff') format('woff'),
+         url('/fonts/Ginjo - 3 Modern Japanese Font/OTF/Ginjo-Regular.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
 /* Reset & Base Styles */
 * {
@@ -13,27 +34,31 @@
 }
 
 :root {
-    /* Color Palette - Eerie Minimal with Orange Accent */
-    --shadow-black: #0d0d0d;
-    --matte-black: #1a1a1a;
-    --deep-black: #0a0a0a;
-    --ghost-white: #f5f5f0;
-    --smoke-white: #e8e8e3;
-    --linen-white: #faf9f6;
-    --dim-white: rgba(245, 245, 240, 0.7);
-    --vibrant-orange: #ff6b35;
-    --deep-orange: #d4491f;
+    /* Color Palette - Ghost White Primary, Matte Black Secondary, Vibrant Orange Accent */
+    --ghost-white: #faf9f6;        /* Primary - linen white background */
+    --smoke-white: #f5f5f0;        /* Lighter white shade */
+    --linen-white: #e8e8e3;        /* Medium white shade */
+    --dim-white: #d4d4cf;          /* Dimmed white */
+
+    --matte-black: #1a1a1a;        /* Secondary - text and accents */
+    --shadow-black: #0d0d0d;       /* Deeper black */
+    --deep-black: #0a0a0a;         /* Darkest black */
+    --dim-black: rgba(26, 26, 26, 0.7);
+
+    --vibrant-orange: #ff6b35;     /* Accent - strategic pops of color */
+    --deep-orange: #d4491f;        /* Darker orange */
     --soft-orange: rgba(255, 107, 53, 0.15);
+    --ultra-soft-orange: rgba(255, 107, 53, 0.05);
 
     /* Gradients */
     --gradient-orange: linear-gradient(135deg, var(--vibrant-orange), var(--deep-orange));
-    --gradient-dark: linear-gradient(180deg, var(--shadow-black), var(--matte-black));
-    --gradient-subtle: linear-gradient(180deg, rgba(255, 107, 53, 0.05), transparent);
+    --gradient-light: linear-gradient(180deg, var(--ghost-white), var(--smoke-white));
+    --gradient-subtle: linear-gradient(180deg, rgba(255, 107, 53, 0.03), transparent);
 
     /* Typography */
-    --font-primary: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
-    --font-display: 'Bebas Neue', 'Space Grotesk', sans-serif;
-    --font-accent: 'Orbitron', monospace;
+    --font-primary: 'Asakusa', 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-display: 'Ginjo', 'Asakusa', sans-serif;
+    --font-accent: 'Space Grotesk', sans-serif;
 
     /* Spacing */
     --section-padding: 120px 60px;
@@ -48,65 +73,81 @@
 html {
     scroll-behavior: auto; /* Disable default smooth for custom Lenis control */
     overflow-x: hidden;
+    background: var(--ghost-white);
 }
 
 body {
     font-family: var(--font-primary);
-    background: var(--shadow-black);
-    color: var(--ghost-white);
+    background: transparent;
+    color: var(--matte-black);
     overflow-x: hidden;
     cursor: none;
     line-height: 1.6;
 }
 
-/* Enhanced Custom Cursor */
+/* Enhanced Custom Cursor - Professional Design with SVG Text */
 .cursor {
     position: fixed;
-    width: 20px;
-    height: 20px;
-    border: 2px solid var(--vibrant-orange);
-    border-radius: 50%;
+    width: 90px;
+    height: 90px;
     pointer-events: none;
     z-index: 10000;
-    mix-blend-mode: difference;
-    transition: transform 0.15s ease, border-color 0.3s ease, width 0.3s ease, height 0.3s ease;
     transform: translate(-50%, -50%);
-    animation: cursorPulse 2s ease-in-out infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-@keyframes cursorPulse {
-    0%, 100% { transform: translate(-50%, -50%) scale(1); }
-    50% { transform: translate(-50%, -50%) scale(1.1); }
+/* SVG cursor rotation - continuously rotating */
+.cursor-svg {
+    animation: rotateCursorText 12s linear infinite;
+    transform-origin: 50% 50%;
+    will-change: transform;
+}
+
+@keyframes rotateCursorText {
+    from { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+    to { transform: translate(-50%, -50%) rotate(360deg) scale(1); }
 }
 
 .cursor-inner {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 4px;
-    height: 4px;
+    width: 6px;
+    height: 6px;
     background: var(--vibrant-orange);
     border-radius: 50%;
-    transform: translate(-50%, -50%);
-    box-shadow: var(--glow-orange);
-    animation: cursorInnerPulse 1.5s ease-in-out infinite alternate;
+    box-shadow: 0 0 12px rgba(255, 107, 53, 0.6), 0 0 24px rgba(255, 107, 53, 0.3);
+    z-index: 10001;
 }
 
-@keyframes cursorInnerPulse {
-    0% { box-shadow: var(--glow-orange); opacity: 1; }
-    100% { box-shadow: var(--glow-orange-strong); opacity: 0.7; }
+.cursor-svg-circle {
+    transition: stroke 0.3s ease;
 }
 
+/* Hover effects - speed up rotation and scale up */
 .cursor.hover {
-    width: 60px;
-    height: 60px;
-    border-color: var(--ghost-white);
-    animation: cursorHoverRotate 0.8s linear infinite;
+    animation: cursorHoverPulse 0.6s ease-out;
 }
 
-@keyframes cursorHoverRotate {
-    0% { transform: translate(-50%, -50%) rotate(0deg); }
-    100% { transform: translate(-50%, -50%) rotate(360deg); }
+/* Speed up rotation and scale on hover */
+.cursor.hover .cursor-svg {
+    animation: rotateCursorTextFast 4s linear infinite;
+}
+
+@keyframes rotateCursorTextFast {
+    from { transform: translate(-50%, -50%) rotate(0deg) scale(1.15); }
+    to { transform: translate(-50%, -50%) rotate(360deg) scale(1.15); }
+}
+
+/* Change banner to orange on hover/click */
+.cursor.hover .cursor-svg-circle {
+    stroke: var(--vibrant-orange);
+}
+
+@keyframes cursorHoverPulse {
+    0% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.15); }
+    100% { transform: translate(-50%, -50%) scale(1); }
 }
 
 .cursor-trail {
@@ -190,9 +231,9 @@ body {
     justify-content: space-between;
     align-items: center;
     z-index: 1000;
-    background: rgba(13, 13, 13, 0.8);
+    background: transparent;
     backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(255, 107, 53, 0.1);
+    border-bottom: 1px solid rgba(26, 26, 26, 0.1);
 }
 
 .nav-logo {
@@ -200,7 +241,7 @@ body {
     font-size: 28px;
     font-weight: 700;
     letter-spacing: 3px;
-    color: var(--ghost-white);
+    color: var(--matte-black);
 }
 
 .glitch {
@@ -216,7 +257,7 @@ body {
 }
 
 .nav-link {
-    color: var(--dim-white);
+    color: var(--matte-black);
     text-decoration: none;
     font-weight: 500;
     font-size: 13px;
@@ -290,12 +331,12 @@ body {
     line-height: 0.9;
     margin-bottom: 40px;
     letter-spacing: 4px;
-    color: var(--ghost-white);
+    color: var(--matte-black);
 }
 
 .hero-title .word {
     display: inline-block;
-    color: var(--ghost-white);
+    color: var(--matte-black);
     opacity: 0;
     transform: translateY(100px);
     position: relative;
@@ -317,7 +358,7 @@ body {
 
 .hero-subtitle {
     font-size: clamp(16px, 2vw, 20px);
-    color: var(--dim-white);
+    color: var(--matte-black);
     margin-bottom: 60px;
     opacity: 0;
     letter-spacing: 3px;
@@ -342,7 +383,7 @@ body {
     text-transform: uppercase;
     border: none;
     background: transparent;
-    color: var(--ghost-white);
+    color: var(--matte-black);
     cursor: none;
     overflow: hidden;
     transition: all 0.3s ease;
@@ -355,7 +396,11 @@ body {
 }
 
 .cta-button.secondary {
-    border: 1px solid var(--ghost-white);
+    border: 1px solid var(--matte-black);
+}
+
+.cta-button.primary:hover {
+    color: var(--ghost-white);
 }
 
 .button-overlay {
@@ -373,11 +418,11 @@ body {
 }
 
 .cta-button.secondary .button-overlay {
-    background: var(--ghost-white);
+    background: var(--matte-black);
 }
 
 .cta-button.secondary:hover {
-    color: var(--shadow-black);
+    color: var(--ghost-white);
 }
 
 .cta-button:hover .button-overlay {
@@ -419,7 +464,7 @@ body {
 
 .title-line {
     display: block;
-    color: var(--ghost-white);
+    color: var(--matte-black);
     opacity: 0;
     transform: translateY(50px);
     transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
@@ -467,8 +512,8 @@ body {
 .feature-card {
     position: relative;
     padding: 50px 40px;
-    background: rgba(26, 26, 26, 0.6);
-    border: 1px solid rgba(255, 107, 53, 0.15);
+    background: rgba(250, 249, 246, 0.8);
+    border: 1px solid rgba(26, 26, 26, 0.1);
     backdrop-filter: blur(10px);
     transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
     overflow: hidden;
@@ -515,7 +560,7 @@ body {
     font-size: 26px;
     font-weight: 400;
     margin-bottom: 15px;
-    color: var(--ghost-white);
+    color: var(--matte-black);
     position: relative;
     z-index: 1;
     letter-spacing: 2px;
@@ -524,7 +569,7 @@ body {
 .feature-description {
     font-size: 15px;
     line-height: 1.8;
-    color: var(--dim-white);
+    color: var(--matte-black);
     position: relative;
     z-index: 1;
 }
@@ -566,7 +611,7 @@ body {
 .experience-description {
     font-size: 17px;
     line-height: 2;
-    color: var(--dim-white);
+    color: var(--matte-black);
     margin-bottom: 50px;
 }
 
@@ -591,7 +636,7 @@ body {
 
 .stat-label {
     font-size: 13px;
-    color: var(--dim-white);
+    color: var(--matte-black);
     text-transform: uppercase;
     letter-spacing: 2px;
     font-family: var(--font-accent);
@@ -636,7 +681,7 @@ body {
 .gallery-image-wrapper {
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, var(--matte-black), var(--shadow-black));
+    background: linear-gradient(135deg, var(--linen-white), var(--smoke-white));
     transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
@@ -656,8 +701,8 @@ body {
     font-family: var(--font-display);
     font-size: 22px;
     font-weight: 400;
-    color: var(--ghost-white);
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+    color: var(--vibrant-orange);
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.8);
     z-index: 2;
     letter-spacing: 2px;
 }
@@ -675,7 +720,7 @@ body {
 .contact-subtitle {
     text-align: center;
     font-size: 18px;
-    color: var(--dim-white);
+    color: var(--matte-black);
     margin-bottom: 60px;
     letter-spacing: 2px;
     text-transform: uppercase;
@@ -697,8 +742,8 @@ body {
     padding: 15px 0;
     background: transparent;
     border: none;
-    border-bottom: 1px solid rgba(255, 107, 53, 0.2);
-    color: var(--ghost-white);
+    border-bottom: 1px solid rgba(26, 26, 26, 0.2);
+    color: var(--matte-black);
     font-size: 16px;
     font-family: var(--font-primary);
     outline: none;
@@ -710,7 +755,7 @@ body {
 }
 
 .form-input::placeholder {
-    color: rgba(245, 245, 240, 0.3);
+    color: rgba(26, 26, 26, 0.3);
 }
 
 .input-line {
@@ -740,8 +785,9 @@ body {
 /* Footer */
 .footer {
     padding: 50px 60px;
-    background: rgba(13, 13, 13, 0.9);
-    border-top: 1px solid rgba(255, 107, 53, 0.1);
+    background: transparent;
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(26, 26, 26, 0.1);
 }
 
 .footer-content {
@@ -753,7 +799,7 @@ body {
 }
 
 .footer-text {
-    color: var(--dim-white);
+    color: var(--matte-black);
     font-size: 13px;
     letter-spacing: 1px;
 }
@@ -764,7 +810,7 @@ body {
 }
 
 .footer-link {
-    color: var(--dim-white);
+    color: var(--matte-black);
     text-decoration: none;
     font-size: 13px;
     transition: color 0.3s ease;

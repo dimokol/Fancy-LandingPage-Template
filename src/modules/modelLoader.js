@@ -40,16 +40,16 @@ export class ModelLoader {
                         model.rotation.set(...options.rotation);
                     }
 
-                    // Apply orange material theme
+                    // Apply white reflective material that responds to lighting
                     model.traverse((child) => {
                         if (child.isMesh) {
-                            // Create custom material with orange accent
+                            // Create highly reflective white material
                             child.material = new THREE.MeshStandardMaterial({
-                                color: options.color || 0xf5f5f0, // ghost-white
-                                metalness: 0.7,
-                                roughness: 0.3,
-                                emissive: 0xff6b35, // vibrant-orange
-                                emissiveIntensity: 0.15
+                                color: 0xffffff,           // Pure white base
+                                metalness: 0.3,            // Less metallic for softer reflections
+                                roughness: 0.2,            // Smooth surface
+                                envMapIntensity: 1.5,      // Enhanced environment reflections
+                                flatShading: false,        // Smooth shading for better light response
                             });
 
                             child.castShadow = true;
@@ -262,28 +262,32 @@ export function createPlaceholderModel(type = 'lion', color = 0xf5f5f0) {
             const bodyGeometry = new THREE.SphereGeometry(1, 32, 32);
             bodyGeometry.scale(1.2, 0.8, 0.8);
             const bodyMaterial = new THREE.MeshStandardMaterial({
-                color,
-                metalness: 0.7,
-                roughness: 0.3,
-                emissive: 0xff6b35,
-                emissiveIntensity: 0.15
+                color: 0xffffff,
+                metalness: 0.3,
+                roughness: 0.2,
+                envMapIntensity: 1.5,
+                flatShading: false
             });
             const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+            body.castShadow = true;
+            body.receiveShadow = true;
             group.add(body);
 
             // Head (sphere)
             const headGeometry = new THREE.SphereGeometry(0.6, 32, 32);
             const head = new THREE.Mesh(headGeometry, bodyMaterial.clone());
             head.position.set(0, 0.5, 0.8);
+            head.castShadow = true;
+            head.receiveShadow = true;
             group.add(head);
 
             // Mane (torus)
             const maneGeometry = new THREE.TorusGeometry(0.7, 0.2, 16, 32);
-            const maneMaterial = bodyMaterial.clone();
-            maneMaterial.emissiveIntensity = 0.3;
-            const mane = new THREE.Mesh(maneGeometry, maneMaterial);
+            const mane = new THREE.Mesh(maneGeometry, bodyMaterial.clone());
             mane.position.copy(head.position);
             mane.rotation.x = Math.PI / 2;
+            mane.castShadow = true;
+            mane.receiveShadow = true;
             group.add(mane);
 
             return group;
@@ -310,12 +314,15 @@ export function createPlaceholderModel(type = 'lion', color = 0xf5f5f0) {
 
     if (geometry) {
         const material = new THREE.MeshStandardMaterial({
-            color,
-            metalness: 0.7,
-            roughness: 0.3,
-            emissive: 0xff6b35,
-            emissiveIntensity: 0.15
+            color: 0xffffff,
+            metalness: 0.3,
+            roughness: 0.2,
+            envMapIntensity: 1.5,
+            flatShading: false
         });
-        return new THREE.Mesh(geometry, material);
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        return mesh;
     }
 }

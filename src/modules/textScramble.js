@@ -116,20 +116,29 @@ export class TextScrambleManager {
     setupScrollReveal() {
         this.observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting && !entry.target.dataset.scrambled) {
-                    const scrambler = this.scramblers.get(entry.target);
-                    const originalText = entry.target.dataset.originalText;
+                const scrambler = this.scramblers.get(entry.target);
+                const originalText = entry.target.dataset.originalText;
 
+                if (entry.isIntersecting) {
+                    // Trigger scramble every time element comes into view
                     if (scrambler && originalText) {
+                        // Clear current text to create anticipation
+                        entry.target.textContent = '';
+
                         setTimeout(() => {
                             scrambler.setText(originalText);
-                            entry.target.dataset.scrambled = 'true';
-                        }, 200);
+                        }, 150);
+                    }
+                } else {
+                    // Optional: Reset text when out of view (for repeating effect)
+                    if (scrambler && originalText) {
+                        entry.target.textContent = '';
                     }
                 }
             });
         }, {
-            threshold: 0.5
+            threshold: 0.3,  // Trigger earlier for better UX
+            rootMargin: '0px 0px -100px 0px'  // Trigger before element is fully in view
         });
 
         this.scramblers.forEach((scrambler, el) => {
