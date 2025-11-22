@@ -41,7 +41,7 @@ export class CustomCursor {
         this.lastTrailSpawn = Date.now();
         this.idleDotsToRemove = []; // Queue of idle dots to remove sequentially
 
-        // Create idle circle particles - always orange
+        // Create idle circle particles - white with blend mode for dynamic color
         for (let i = 0; i < this.maxParticles; i++) {
             const particle = document.createElement('div');
             particle.className = 'cursor-particle idle';
@@ -49,12 +49,13 @@ export class CustomCursor {
                 position: fixed;
                 width: 4px;
                 height: 4px;
-                background: var(--vibrant-orange);
+                background: var(--ghost-white);
                 border-radius: 50%;
                 pointer-events: none;
                 z-index: 9998;
                 opacity: 0;
                 transition: opacity 0.2s ease;
+                mix-blend-mode: difference;
             `;
             document.body.appendChild(particle);
             this.idleParticles.push({
@@ -82,7 +83,6 @@ export class CustomCursor {
             left: 50%;
             transform: translate(-50%, -50%);
             pointer-events: none;
-            mix-blend-mode: color-dodge;
         `;
 
         // Create defs for text path
@@ -126,13 +126,13 @@ export class CustomCursor {
         mask.appendChild(textElement);
         defs.appendChild(mask);
 
-        // Create ring (banner) - dark by default, blend mode for interactions
+        // Create ring (banner) - white by default, will invert via CSS for dynamic color
         const ring = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         ring.setAttribute('cx', '32');
         ring.setAttribute('cy', '32');
         ring.setAttribute('r', '24');
         ring.setAttribute('fill', 'none');
-        ring.setAttribute('stroke', 'rgba(26, 26, 26, 0.92)');
+        ring.setAttribute('stroke', 'rgba(255, 255, 255, 0.92)');
         ring.setAttribute('stroke-width', '10');
         ring.setAttribute('mask', 'url(#textMask)');
         ring.setAttribute('class', 'cursor-svg-circle');
@@ -439,14 +439,14 @@ export class CustomCursor {
     }
 
     spawnTrailDot() {
-        // Create a new trail dot at current cursor position - always orange
+        // Create a new trail dot at current cursor position - white with blend mode
         const trailDot = document.createElement('div');
         trailDot.className = 'cursor-particle trail';
         trailDot.style.cssText = `
             position: fixed;
             width: 4px;
             height: 4px;
-            background: var(--vibrant-orange);
+            background: var(--ghost-white);
             border-radius: 50%;
             pointer-events: none;
             z-index: 9998;
@@ -454,6 +454,7 @@ export class CustomCursor {
             top: ${this.cursorY}px;
             opacity: 0.6;
             transition: opacity 0.3s ease;
+            mix-blend-mode: difference;
         `;
         document.body.appendChild(trailDot);
 
@@ -508,12 +509,13 @@ export class CustomCursor {
             top: ${this.mouseY}px;
             width: 0;
             height: 0;
-            border: 2px solid var(--vibrant-orange);
+            border: 2px solid var(--ghost-white);
             border-radius: 50%;
             pointer-events: none;
             z-index: 9997;
             transform: translate(-50%, -50%);
             animation: rippleEffect 0.6s ease-out forwards;
+            mix-blend-mode: difference;
         `;
 
         document.body.appendChild(ripple);

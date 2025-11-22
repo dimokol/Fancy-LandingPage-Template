@@ -122,6 +122,19 @@ class EtherealVoid {
             ease: 'power3.out'
         });
 
+        // About section paragraphs animation
+        gsap.from('.about-paragraph', {
+            scrollTrigger: {
+                trigger: '.about-section',
+                start: 'top 80%',
+            },
+            y: 50,
+            opacity: 0,
+            stagger: 0.15,
+            duration: 1,
+            ease: 'power3.out'
+        });
+
         // Feature cards scroll animation
         gsap.from('.feature-card', {
             scrollTrigger: {
@@ -188,6 +201,16 @@ class EtherealVoid {
             stagger: 0.1,
             duration: 0.8,
             ease: 'power2.out'
+        });
+
+        // Section separators animation
+        gsap.utils.toArray('.section').forEach(section => {
+            ScrollTrigger.create({
+                trigger: section,
+                start: 'top 80%',
+                onEnter: () => section.classList.add('section-visible'),
+                once: true
+            });
         });
 
         // Button hover animations
@@ -290,11 +313,11 @@ class EtherealVoid {
         galleryItems.forEach((item, index) => {
             const wrapper = item.querySelector('.gallery-image-wrapper');
 
-            // Create a gradient background
+            // Create portfolio-themed gradient backgrounds
             const colors = [
-                'linear-gradient(135deg, #8b5cf6, #00d4ff)',
-                'linear-gradient(135deg, #ff006e, #d946ff)',
-                'linear-gradient(135deg, #00d4ff, #1a0633)'
+                'linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(26, 26, 26, 0.05))',
+                'linear-gradient(135deg, rgba(26, 26, 26, 0.08), rgba(255, 107, 53, 0.08))',
+                'linear-gradient(135deg, rgba(255, 107, 53, 0.06), rgba(26, 26, 26, 0.1))'
             ];
 
             wrapper.style.background = colors[index % colors.length];

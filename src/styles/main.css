@@ -96,6 +96,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    mix-blend-mode: difference;
 }
 
 /* SVG cursor rotation - continuously rotating */
@@ -103,6 +104,7 @@ body {
     animation: rotateCursorText 12s linear infinite;
     transform-origin: 50% 50%;
     will-change: transform;
+    filter: invert(1);
 }
 
 @keyframes rotateCursorText {
@@ -114,14 +116,14 @@ body {
     position: absolute;
     width: 6px;
     height: 6px;
-    background: var(--vibrant-orange);
+    background: var(--ghost-white);
     border-radius: 50%;
-    box-shadow: 0 0 12px rgba(255, 107, 53, 0.6), 0 0 24px rgba(255, 107, 53, 0.3);
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.6), 0 0 24px rgba(255, 255, 255, 0.3);
     z-index: 10001;
 }
 
 .cursor-svg-circle {
-    transition: stroke 0.3s ease;
+    transition: stroke 0.3s ease, fill 0.3s ease;
 }
 
 /* Hover effects - speed up rotation and scale up */
@@ -139,9 +141,9 @@ body {
     to { transform: translate(-50%, -50%) rotate(360deg) scale(1.15); }
 }
 
-/* Change banner to orange on hover/click */
+/* Keep banner color consistent, add glow on hover */
 .cursor.hover .cursor-svg-circle {
-    stroke: var(--vibrant-orange);
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
 }
 
 @keyframes cursorHoverPulse {
@@ -156,10 +158,10 @@ body {
     height: 400px;
     pointer-events: none;
     z-index: 9999;
-    background: radial-gradient(circle, rgba(255, 107, 53, 0.08) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
     transform: translate(-50%, -50%);
     transition: opacity 0.3s ease;
-    mix-blend-mode: screen;
+    mix-blend-mode: difference;
 }
 
 /* Cursor Text Effect */
@@ -220,7 +222,7 @@ body {
     100% { transform: translateX(16px); }
 }
 
-/* Navigation */
+/* Navigation - Floating without background */
 .nav {
     position: fixed;
     top: 0;
@@ -232,8 +234,8 @@ body {
     align-items: center;
     z-index: 1000;
     background: transparent;
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(26, 26, 26, 0.1);
+    backdrop-filter: none;
+    border-bottom: none;
 }
 
 .nav-logo {
@@ -242,6 +244,12 @@ body {
     font-weight: 700;
     letter-spacing: 3px;
     color: var(--matte-black);
+    transition: transform 0.3s ease;
+    cursor: none;
+}
+
+.nav-logo:hover {
+    transform: translateX(5px);
 }
 
 .glitch {
@@ -249,6 +257,34 @@ body {
     display: inline-block;
     color: var(--vibrant-orange);
     text-shadow: 2px 2px 0 rgba(255, 107, 53, 0.2);
+    transition: all 0.3s ease;
+}
+
+.glitch:hover {
+    animation: glitchEffect 0.5s ease-in-out;
+}
+
+@keyframes glitchEffect {
+    0%, 100% {
+        transform: translate(0);
+        text-shadow: 2px 2px 0 rgba(255, 107, 53, 0.2);
+    }
+    20% {
+        transform: translate(-2px, 2px);
+        text-shadow: -2px -2px 0 var(--vibrant-orange), 2px 2px 0 var(--matte-black);
+    }
+    40% {
+        transform: translate(2px, -2px);
+        text-shadow: 2px -2px 0 var(--vibrant-orange), -2px 2px 0 var(--matte-black);
+    }
+    60% {
+        transform: translate(-2px, -2px);
+        text-shadow: -2px 2px 0 var(--vibrant-orange), 2px -2px 0 var(--matte-black);
+    }
+    80% {
+        transform: translate(2px, 2px);
+        text-shadow: 2px 2px 0 var(--vibrant-orange), -2px -2px 0 var(--matte-black);
+    }
 }
 
 .nav-menu {
@@ -310,6 +346,25 @@ body {
     align-items: center;
     justify-content: center;
     position: relative;
+}
+
+/* Subtle section separators */
+.section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--vibrant-orange), transparent);
+    opacity: 0;
+    transition: width 1s cubic-bezier(0.23, 1, 0.32, 1), opacity 1s ease;
+}
+
+.section.section-visible::before {
+    width: 60%;
+    opacity: 0.3;
 }
 
 /* Hero Section */
@@ -449,6 +504,54 @@ body {
     top: 0;
     left: 0;
     pointer-events: none;
+}
+
+/* About Section */
+.about-section {
+    flex-direction: column;
+    background: linear-gradient(180deg, transparent, rgba(26, 26, 26, 0.02), transparent);
+}
+
+.about-content {
+    max-width: 900px;
+    width: 100%;
+}
+
+.about-text {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.about-paragraph {
+    font-size: 18px;
+    line-height: 2;
+    color: var(--matte-black);
+    font-family: var(--font-accent);
+    font-weight: 300;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.about-paragraph.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.about-paragraph:nth-child(2) {
+    transition-delay: 0.1s;
+}
+
+.about-paragraph:nth-child(3) {
+    transition-delay: 0.2s;
+}
+
+.about-paragraph em {
+    font-style: italic;
+    color: var(--vibrant-orange);
+    font-weight: 400;
 }
 
 /* Section Title */
@@ -782,12 +885,12 @@ body {
     pointer-events: none;
 }
 
-/* Footer */
+/* Footer - Floating without background */
 .footer {
     padding: 50px 60px;
     background: transparent;
-    backdrop-filter: blur(20px);
-    border-top: 1px solid rgba(26, 26, 26, 0.1);
+    backdrop-filter: none;
+    border-top: none;
 }
 
 .footer-content {
@@ -835,6 +938,51 @@ body {
 @keyframes textScramble {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.5; }
+}
+
+/* Performance Optimizations */
+.cursor,
+.cursor-svg,
+.cursor-inner,
+.cursor-trail {
+    will-change: transform;
+}
+
+.feature-card,
+.gallery-item,
+.cta-button {
+    will-change: transform;
+}
+
+.hero-title .word,
+.title-line,
+.about-paragraph {
+    will-change: opacity, transform;
+}
+
+/* Reduce Motion for Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .cursor-svg {
+        animation: none !important;
+    }
+
+    .cursor,
+    .cursor-trail {
+        display: none !important;
+    }
+
+    body {
+        cursor: auto !important;
+    }
 }
 
 /* Responsive Design */
