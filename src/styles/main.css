@@ -123,11 +123,6 @@ body {
     z-index: 10001;
 }
 
-.cursor-svg-circle {
-    stroke: rgba(255, 255, 255, 0.5);
-    transition: stroke 0.3s ease;
-}
-
 /* Hover effects - scale up and speed up rotation */
 .cursor.hover {
     transform: translate(-50%, -50%) scale(1.15);
@@ -136,12 +131,6 @@ body {
 /* Speed up rotation on hover */
 .cursor.hover .cursor-svg {
     animation-duration: 4s;
-}
-
-/* More transparent on hover */
-.cursor.hover .cursor-svg-circle {
-    stroke: rgba(255, 255, 255, 0.3);
-    transition: stroke 0.3s ease;
 }
 
 .cursor-trail {

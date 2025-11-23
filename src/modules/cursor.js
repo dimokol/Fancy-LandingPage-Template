@@ -52,7 +52,7 @@ export class CustomCursor {
                 background: var(--ghost-white);
                 border-radius: 50%;
                 pointer-events: none;
-                z-index: 9995;
+                z-index: 9990;
                 opacity: 0;
                 transition: opacity 0.2s ease;
                 mix-blend-mode: difference;
@@ -122,13 +122,13 @@ export class CustomCursor {
         mask.appendChild(textElement);
         defs.appendChild(mask);
 
-        // Create ring (banner) - white with low opacity, will invert via CSS
+        // Create ring (banner) - white like center dot, will invert via CSS
         const ring = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         ring.setAttribute('cx', '32');
         ring.setAttribute('cy', '32');
         ring.setAttribute('r', '24');
         ring.setAttribute('fill', 'none');
-        ring.setAttribute('stroke', 'rgba(255, 255, 255, 0.5)');
+        ring.setAttribute('stroke', 'rgb(255, 255, 255)');
         ring.setAttribute('stroke-width', '10');
         ring.setAttribute('mask', 'url(#textMask)');
         ring.setAttribute('class', 'cursor-svg-circle');
@@ -447,7 +447,7 @@ export class CustomCursor {
             background: var(--ghost-white);
             border-radius: 50%;
             pointer-events: none;
-            z-index: 9995;
+            z-index: 9990;
             left: ${this.cursorX - 2}px;
             top: ${this.cursorY - 2}px;
             opacity: 0.6;
