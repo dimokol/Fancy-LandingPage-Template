@@ -52,10 +52,11 @@ export class CustomCursor {
                 background: var(--ghost-white);
                 border-radius: 50%;
                 pointer-events: none;
-                z-index: 9998;
+                z-index: 9997;
                 opacity: 0;
                 transition: opacity 0.2s ease;
-                mix-blend-mode: difference;
+                mix-blend-mode: exclusion;
+                filter: invert(1);
             `;
             document.body.appendChild(particle);
             this.idleParticles.push({
@@ -78,10 +79,6 @@ export class CustomCursor {
         svg.setAttribute('viewBox', '0 0 64 64');
         svg.setAttribute('class', 'cursor-svg');
         svg.style.cssText = `
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             pointer-events: none;
         `;
 
@@ -451,12 +448,13 @@ export class CustomCursor {
             background: var(--ghost-white);
             border-radius: 50%;
             pointer-events: none;
-            z-index: 9998;
-            left: ${this.cursorX}px;
-            top: ${this.cursorY}px;
+            z-index: 9997;
+            left: ${this.cursorX - 2}px;
+            top: ${this.cursorY - 2}px;
             opacity: 0.6;
             transition: opacity 0.3s ease;
-            mix-blend-mode: difference;
+            mix-blend-mode: exclusion;
+            filter: invert(1);
         `;
         document.body.appendChild(trailDot);
 
@@ -507,17 +505,18 @@ export class CustomCursor {
         const ripple = document.createElement('div');
         ripple.style.cssText = `
             position: fixed;
-            left: ${this.mouseX}px;
-            top: ${this.mouseY}px;
+            left: ${this.cursorX}px;
+            top: ${this.cursorY}px;
             width: 0;
             height: 0;
             border: 2px solid var(--ghost-white);
             border-radius: 50%;
             pointer-events: none;
-            z-index: 9997;
+            z-index: 9996;
             transform: translate(-50%, -50%);
             animation: rippleEffect 0.6s ease-out forwards;
-            mix-blend-mode: difference;
+            mix-blend-mode: exclusion;
+            filter: invert(1);
         `;
 
         document.body.appendChild(ripple);

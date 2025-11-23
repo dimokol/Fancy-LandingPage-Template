@@ -96,11 +96,12 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    mix-blend-mode: difference;
+    mix-blend-mode: exclusion;
+    filter: invert(1);
     transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-/* SVG cursor rotation - continuously rotating */
+/* SVG cursor rotation - continuously rotating, centered via flex parent */
 .cursor-svg {
     animation: rotateCursorText 12s linear infinite;
     transform-origin: center center;
@@ -151,7 +152,8 @@ body {
     background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
     transform: translate(-50%, -50%);
     transition: opacity 0.3s ease;
-    mix-blend-mode: difference;
+    mix-blend-mode: exclusion;
+    filter: invert(1);
 }
 
 /* Cursor Text Effect */
