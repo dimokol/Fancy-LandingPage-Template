@@ -124,7 +124,8 @@ body {
 }
 
 .cursor-svg-circle {
-    transition: stroke 0.3s ease, fill 0.3s ease;
+    stroke: rgba(255, 255, 255, 0.5);
+    transition: stroke 0.3s ease;
 }
 
 /* Hover effects - scale up and speed up rotation */
@@ -137,9 +138,10 @@ body {
     animation-duration: 4s;
 }
 
-/* Subtle glow on hover - no rectangular shadows */
+/* More transparent on hover */
 .cursor.hover .cursor-svg-circle {
-    stroke: rgba(255, 255, 255, 1);
+    stroke: rgba(255, 255, 255, 0.3);
+    transition: stroke 0.3s ease;
 }
 
 .cursor-trail {
