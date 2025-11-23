@@ -55,8 +55,7 @@ export class CustomCursor {
                 z-index: 9997;
                 opacity: 0;
                 transition: opacity 0.2s ease;
-                mix-blend-mode: exclusion;
-                filter: invert(1);
+                mix-blend-mode: difference;
             `;
             document.body.appendChild(particle);
             this.idleParticles.push({
@@ -453,8 +452,7 @@ export class CustomCursor {
             top: ${this.cursorY - 2}px;
             opacity: 0.6;
             transition: opacity 0.3s ease;
-            mix-blend-mode: exclusion;
-            filter: invert(1);
+            mix-blend-mode: difference;
         `;
         document.body.appendChild(trailDot);
 
@@ -515,8 +513,7 @@ export class CustomCursor {
             z-index: 9996;
             transform: translate(-50%, -50%);
             animation: rippleEffect 0.6s ease-out forwards;
-            mix-blend-mode: exclusion;
-            filter: invert(1);
+            mix-blend-mode: difference;
         `;
 
         document.body.appendChild(ripple);
