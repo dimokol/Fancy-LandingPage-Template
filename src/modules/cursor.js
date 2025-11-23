@@ -224,6 +224,7 @@ export class CustomCursor {
 
             el.addEventListener('mouseenter', () => {
                 this.cursor.classList.add('hover');
+                this.cursor.style.transform = 'translate(-50%, -50%) scale(1.15)';
                 this.hoveredElement = el;
                 this.isOverMagneticElement = true;
 
@@ -239,6 +240,7 @@ export class CustomCursor {
 
             el.addEventListener('mouseleave', () => {
                 this.cursor.classList.remove('hover');
+                this.cursor.style.transform = 'translate(-50%, -50%) scale(1)';
                 this.hoveredElement = null;
                 this.isOverMagneticElement = false;
 
@@ -272,18 +274,18 @@ export class CustomCursor {
             });
         });
 
-        // Click effect
+        // Click effect - smooth scale transition
         document.addEventListener('mousedown', () => {
-            this.cursor.style.transform = 'translate(-50%, -50%) scale(0.8)';
-            this.cursor.classList.add('hover');
+            this.cursor.style.transform = 'translate(-50%, -50%) scale(0.85)';
             this.createClickRipple();
         });
 
         document.addEventListener('mouseup', () => {
-            this.cursor.style.transform = 'translate(-50%, -50%) scale(1)';
-            // Only remove hover class if not over a magnetic element
-            if (!this.isOverMagneticElement) {
-                this.cursor.classList.remove('hover');
+            // Return to hover state if over magnetic element, otherwise normal state
+            if (this.isOverMagneticElement) {
+                this.cursor.style.transform = 'translate(-50%, -50%) scale(1.15)';
+            } else {
+                this.cursor.style.transform = 'translate(-50%, -50%) scale(1)';
             }
         });
 
