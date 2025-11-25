@@ -32,6 +32,12 @@ export class CustomCursor {
         this.edgePosition = null; // 'top', 'bottom', 'left', 'right', 'top-left', etc.
         this.lastMoveTime = Date.now();
 
+        // Banner rotation tracking for smooth transitions
+        this.bannerRotation = 0;
+        this.bannerRotationSpeed = 360 / 12000; // 360 degrees in 12 seconds (normal speed)
+        this.targetRotationSpeed = this.bannerRotationSpeed;
+        this.lastFrameTime = Date.now();
+
         // Cursor particles for idle circle and trail
         this.idleParticles = [];
         this.trailParticles = [];
@@ -41,23 +47,39 @@ export class CustomCursor {
         this.lastTrailSpawn = Date.now();
         this.idleDotsToRemove = []; // Queue of idle dots to remove sequentially
 
-        // Create idle circle particles - white with blend mode for dynamic color
+        // Create a container for trail dots that shares the same blend mode as cursor
+        // but stays fixed in the viewport (trails don't move with cursor)
+        this.trailContainer = document.createElement('div');
+        this.trailContainer.className = 'cursor-trail-container';
+        this.trailContainer.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+        `;
+        document.body.appendChild(this.trailContainer);
+
+        // Create idle circle particles - added to cursor element to share its blend mode
         for (let i = 0; i < this.maxParticles; i++) {
             const particle = document.createElement('div');
             particle.className = 'cursor-particle idle';
             particle.style.cssText = `
-                position: fixed;
+                position: absolute;
                 width: 4px;
                 height: 4px;
-                background: var(--ghost-white);
+                background: rgb(255, 255, 255);
                 border-radius: 50%;
                 pointer-events: none;
-                z-index: 9990;
                 opacity: 0;
                 transition: opacity 0.2s ease;
-                mix-blend-mode: difference;
+                z-index: -1;
             `;
-            document.body.appendChild(particle);
+            // Add to cursor element (inherits mix-blend-mode from cursor)
+            this.cursor.appendChild(particle);
             this.idleParticles.push({
                 element: particle,
                 x: 0,
@@ -132,13 +154,37 @@ export class CustomCursor {
         ring.setAttribute('stroke-width', '10');
         ring.setAttribute('mask', 'url(#textMask)');
         ring.setAttribute('class', 'cursor-svg-circle');
+        ring.style.opacity = '1';
+        ring.style.transition = 'opacity 0.2s ease';
 
         svg.appendChild(ring);
+
+        // Create solid text overlay (hidden by default, shown on hover)
+        const solidText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        solidText.setAttribute('fill', 'rgb(255, 255, 255)');
+        solidText.setAttribute('font-family', 'Ginjo, sans-serif');
+        solidText.setAttribute('font-size', '14');
+        solidText.setAttribute('font-weight', '700');
+        solidText.setAttribute('letter-spacing', '2.15');
+        solidText.setAttribute('dy', '4');
+        solidText.setAttribute('class', 'cursor-svg-text-solid');
+        solidText.style.opacity = '0';
+        solidText.style.transition = 'opacity 0.2s ease';
+
+        const solidTextPathElement = document.createElementNS('http://www.w3.org/2000/svg', 'textPath');
+        solidTextPathElement.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '#circlePath');
+        solidTextPathElement.setAttribute('startOffset', '0%');
+        solidTextPathElement.setAttribute('text-anchor', 'start');
+        solidTextPathElement.textContent = 'DIMOKOL • DIMOKOL • ';
+
+        solidText.appendChild(solidTextPathElement);
+        svg.appendChild(solidText);
 
         // Add SVG to cursor element
         this.cursor.appendChild(svg);
         this.cursorSVG = svg;
         this.cursorCircle = ring;
+        this.cursorTextSolid = solidText;
     }
 
     init() {
@@ -155,9 +201,11 @@ export class CustomCursor {
             this.mouseX = e.clientX;
             this.mouseY = e.clientY;
 
+            // Check if cursor banner is over any content (for switching banner style)
+            this.checkBannerOverContent(e.clientX, e.clientY);
+
             // Check if at screen edge (within 5px)
             const edgeThreshold = 5;
-            const wasAtEdge = this.isAtEdge;
             this.isAtEdge = false;
             this.edgePosition = null;
             this.isAtCorner = false;
@@ -224,6 +272,13 @@ export class CustomCursor {
                 this.hoveredElement = el;
                 this.isOverMagneticElement = true;
 
+                // Speed up banner rotation (4s = 360/4000 degrees per ms)
+                this.targetRotationSpeed = 360 / 4000;
+
+                // Switch to text-only mode (no background ring) on hover
+                this.cursorCircle.style.opacity = '0';
+                this.cursorTextSolid.style.opacity = '1';
+
                 // Show cursor text if data attribute exists
                 const cursorText = el.dataset.cursorText;
                 if (cursorText) {
@@ -237,8 +292,15 @@ export class CustomCursor {
             el.addEventListener('mouseleave', () => {
                 this.cursor.classList.remove('hover');
                 this.cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+
+                // Switch back to ring with masked text (default mode)
+                this.cursorCircle.style.opacity = '1';
+                this.cursorTextSolid.style.opacity = '0';
                 this.hoveredElement = null;
                 this.isOverMagneticElement = false;
+
+                // Slow down banner rotation back to normal (12s = 360/12000 degrees per ms)
+                this.targetRotationSpeed = 360 / 12000;
 
                 this.hideCursorText();
 
@@ -312,10 +374,15 @@ export class CustomCursor {
             const angle = this.idleTime * 0.05 * speedVariation;
             const radius = 35;
 
+            // Cursor center is at 45px, 45px (half of 90x90)
+            const cursorCenterX = 45;
+            const cursorCenterY = 45;
+
             this.idleParticles.forEach((particle, i) => {
                 const particleAngle = angle + (i / this.maxParticles) * Math.PI * 2;
-                const x = this.cursorX + Math.cos(particleAngle) * radius - 2;
-                const y = this.cursorY + Math.sin(particleAngle) * radius - 2;
+                // Position relative to cursor element center
+                const x = cursorCenterX + Math.cos(particleAngle) * radius - 2;
+                const y = cursorCenterY + Math.sin(particleAngle) * radius - 2;
 
                 particle.x = x;
                 particle.y = y;
@@ -335,6 +402,10 @@ export class CustomCursor {
     startEdgeIdleAnimation() {
         // Energy emission effect - emit particles like rays/explosions
         if (this.isIdle && this.isAtEdge) {
+            // Cursor center is at 45px, 45px (half of 90x90)
+            const cursorCenterX = 45;
+            const cursorCenterY = 45;
+
             if (this.isAtCorner) {
                 // Corner animation - radial burst in quarter circle
                 this.idleParticles.forEach((particle, i) => {
@@ -366,8 +437,9 @@ export class CustomCursor {
                     const wavePhase = (this.idleTime * 0.1 + i * 0.4) % (Math.PI * 2);
                     const emissionDistance = 15 + Math.sin(wavePhase) * 30;
 
-                    const x = this.cursorX + Math.cos(particleAngle) * emissionDistance - 2;
-                    const y = this.cursorY + Math.sin(particleAngle) * emissionDistance - 2;
+                    // Position relative to cursor element center
+                    const x = cursorCenterX + Math.cos(particleAngle) * emissionDistance - 2;
+                    const y = cursorCenterY + Math.sin(particleAngle) * emissionDistance - 2;
 
                     // Wave opacity
                     const pulseOpacity = 0.2 + Math.abs(Math.sin(wavePhase)) * 0.6;
@@ -414,8 +486,9 @@ export class CustomCursor {
                     const pulsePhase = (this.idleTime * 0.08 + i * 0.2) % (Math.PI * 2);
                     const emissionDistance = 20 + Math.sin(pulsePhase) * 25;
 
-                    const x = this.cursorX + Math.cos(particleAngle) * emissionDistance - 2;
-                    const y = this.cursorY + Math.sin(particleAngle) * emissionDistance - 2;
+                    // Position relative to cursor element center
+                    const x = cursorCenterX + Math.cos(particleAngle) * emissionDistance - 2;
+                    const y = cursorCenterY + Math.sin(particleAngle) * emissionDistance - 2;
 
                     // Pulsing opacity synchronized with emission
                     const pulseOpacity = 0.3 + Math.abs(Math.sin(pulsePhase)) * 0.5;
@@ -437,24 +510,24 @@ export class CustomCursor {
     }
 
     spawnTrailDot() {
-        // Create a new trail dot at current cursor position - white with blend mode
+        // Create a new trail dot - added to trail container which has same blend mode as cursor
+        // Trail dots stay at their spawn position (don't move with cursor)
         const trailDot = document.createElement('div');
         trailDot.className = 'cursor-particle trail';
         trailDot.style.cssText = `
             position: fixed;
             width: 4px;
             height: 4px;
-            background: var(--ghost-white);
+            background: rgb(255, 255, 255);
             border-radius: 50%;
             pointer-events: none;
-            z-index: 9990;
             left: ${this.cursorX - 2}px;
             top: ${this.cursorY - 2}px;
             opacity: 0.6;
             transition: opacity 0.3s ease;
-            mix-blend-mode: difference;
         `;
-        document.body.appendChild(trailDot);
+        // Add to trail container (has same mix-blend-mode: difference as cursor)
+        this.trailContainer.appendChild(trailDot);
 
         const spawnTime = Date.now();
         this.trailParticles.push({
@@ -498,25 +571,35 @@ export class CustomCursor {
         }
     }
 
+    checkBannerOverContent(x, y) {
+        // Banner appearance is now controlled by hover state on magnetic elements
+        // This method is kept for potential future use but no longer switches banner styles
+        // The banner style switching is handled in mouseenter/mouseleave events
+    }
+
 
     createClickRipple() {
+        // Cursor center is at 45px, 45px (half of 90x90)
+        const cursorCenterX = 45;
+        const cursorCenterY = 45;
+
         const ripple = document.createElement('div');
         ripple.style.cssText = `
-            position: fixed;
-            left: ${this.cursorX}px;
-            top: ${this.cursorY}px;
+            position: absolute;
+            left: ${cursorCenterX}px;
+            top: ${cursorCenterY}px;
             width: 0;
             height: 0;
-            border: 2px solid var(--ghost-white);
+            border: 2px solid rgb(255, 255, 255);
             border-radius: 50%;
             pointer-events: none;
-            z-index: 9996;
             transform: translate(-50%, -50%);
             animation: rippleEffect 0.6s ease-out forwards;
-            mix-blend-mode: difference;
+            z-index: -1;
         `;
 
-        document.body.appendChild(ripple);
+        // Add to cursor element (inherits mix-blend-mode from cursor)
+        this.cursor.appendChild(ripple);
 
         setTimeout(() => ripple.remove(), 600);
     }
@@ -602,6 +685,24 @@ export class CustomCursor {
                 this.spawnTrailDot();
                 this.lastTrailSpawn = now;
             }
+        }
+
+        // Update banner rotation smoothly without snapping
+        const currentTime = Date.now();
+        const deltaTime = currentTime - this.lastFrameTime;
+        this.lastFrameTime = currentTime;
+
+        // Smoothly interpolate rotation speed towards target
+        const speedLerpFactor = 0.05;
+        this.bannerRotationSpeed += (this.targetRotationSpeed - this.bannerRotationSpeed) * speedLerpFactor;
+
+        // Update rotation angle
+        this.bannerRotation += this.bannerRotationSpeed * deltaTime;
+        this.bannerRotation = this.bannerRotation % 360; // Keep within 0-360
+
+        // Apply rotation to SVG
+        if (this.cursorSVG) {
+            this.cursorSVG.style.transform = `rotate(${this.bannerRotation}deg)`;
         }
 
         requestAnimationFrame(() => this.animate());

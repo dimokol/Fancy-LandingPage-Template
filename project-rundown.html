@@ -1,0 +1,640 @@
+<h2 class="font-semibold" node="[object Object]">🎨 <strong class="font-semibold" node="[object Object]">1. CUSTOM CURSOR SYSTEM</strong></h2>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Center Dot</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Visual</strong>: 6px white dot with glow shadow</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Behavior</strong>:
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Uses <code class="text-text-500" node="[object Object]">mix-blend-mode: difference</code> for dynamic color adaptation</li>
+<li node="[object Object]">Should invert based on background (white→black, black→white)</li>
+<li node="[object Object]">Smooth easing follow (0.5 ease, 0.3 on magnetic elements)</li>
+</ul>
+</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Effects</strong>: Glowing box-shadow (12px and 24px spread)</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Rotating Banner</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Visual</strong>: SVG circle (48px diameter, 10px stroke) with "DIMOKOL • DIMOKOL •" text</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Behavior</strong>:
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Continuous 12-second rotation animation</li>
+<li node="[object Object]">Uses <code class="text-text-500" node="[object Object]">mix-blend-mode: difference</code> (via parent) for color adaptation</li>
+<li node="[object Object]">Should adapt to backgrounds like center dot</li>
+</ul>
+</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Hover State</strong>:
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Speeds up to 4-second rotation</li>
+<li node="[object Object]">Scales to 1.15x</li>
+<li node="[object Object]">Adds drop-shadow glow</li>
+<li node="[object Object]">Pulse animation (0.6s ease-out)</li>
+</ul>
+</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Cursor Trail</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Visual</strong>: 400px radial gradient glow following cursor</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Behavior</strong>:
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Slower easing (0.08) than main cursor</li>
+<li node="[object Object]">Uses <code class="text-text-500" node="[object Object]">mix-blend-mode: difference</code></li>
+<li node="[object Object]">White gradient that should invert on backgrounds</li>
+</ul>
+</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Idle Particles (Orbital)</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Trigger</strong>: After 2 seconds of no movement</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Visual</strong>: 15 white dots (4px each) with <code class="text-text-500" node="[object Object]">mix-blend-mode: difference</code></li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Behavior</strong>:
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Circle formation around cursor (35px radius)</li>
+<li node="[object Object]">Rotation with subtle speed variation (sine wave)</li>
+<li node="[object Object]">Sequential fade-in</li>
+<li node="[object Object]">Sequential fade-out when movement resumes</li>
+</ul>
+</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Edge Idle Animation</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Trigger</strong>: Cursor idle at screen edges (within 5px)</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Corner Mode</strong>: Quarter-circle burst pattern, pulsing waves</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Side Mode</strong>: Ray emission in 120° arc away from edge</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Visual</strong>: Same 15 particles with wave-based opacity/distance</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Trail Dots</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Trigger</strong>: When cursor moves with speed &gt; 1</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Spawn Rate</strong>: Every 30ms</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Visual</strong>: 4px white dots with <code class="text-text-500" node="[object Object]">mix-blend-mode: difference</code></li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Lifecycle</strong>:
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Visible for 600ms</li>
+<li node="[object Object]">Fades out over 300ms</li>
+<li node="[object Object]">Removes idle dots sequentially as trail spawns</li>
+</ul>
+</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Click Ripple</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Trigger</strong>: On mousedown</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Visual</strong>: Expanding circle border (0→80px over 600ms)</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Behavior</strong>: Orange color, uses <code class="text-text-500" node="[object Object]">mix-blend-mode: difference</code></li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Magnetic Attraction</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Targets</strong>: Links, buttons, feature cards, gallery items, form inputs, <code class="text-text-500" node="[object Object]">[data-magnetic]</code></li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Behavior</strong>:
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Distance-based falloff (200px max, 50px min)</li>
+<li node="[object Object]">Quadratic strength scaling</li>
+<li node="[object Object]">Pulls cursor toward element center</li>
+<li node="[object Object]">0.35 strength when very close (&lt; 50px)</li>
+</ul>
+</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Element Distortion</strong>:
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Elements translate 0.2x toward cursor position</li>
+<li node="[object Object]">Smooth reset on mouse leave (0.5s cubic-bezier)</li>
+</ul>
+</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Cursor States</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Default</strong>: Normal following</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Hover</strong>: Scale, faster rotation, glow</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Click</strong>: Scale down to 0.8, add hover class</li>
+</ul>
+<hr>
+<h2 class="font-semibold" node="[object Object]">🧭 <strong class="font-semibold" node="[object Object]">2. NAVIGATION</strong></h2>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Logo ("DIMOKOL")</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Visual</strong>: Orange (#ff6b35) with subtle shadow</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Font</strong>: Ginjo, 28px, 700 weight, 3px letter-spacing</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Hover</strong>:
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Shifts right 5px</li>
+<li node="[object Object]">Triggers glitch animation (0.5s)</li>
+<li node="[object Object]">Glitch creates RGB split shadows and position jitter</li>
+</ul>
+</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Nav Links</strong> (5 total: Home, Skills, Projects, Work, Contact)</h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Visual</strong>: Black text, uppercase, 13px, 2px letter-spacing</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Hover</strong>:
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Text turns orange</li>
+<li node="[object Object]">Underline expands left-to-right (1px orange line)</li>
+<li node="[object Object]">Shifts right 5px (GSAP)</li>
+</ul>
+</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Click</strong>: Smooth scroll to section (Lenis integration)</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Nav Behavior</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Position</strong>: Fixed top, floating (no background/blur)</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Z-index</strong>: 1000</li>
+</ul>
+<hr>
+<h2 class="font-semibold" node="[object Object]">📊 <strong class="font-semibold" node="[object Object]">3. PROGRESS BAR</strong></h2>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Position</strong>: Fixed top, 2px height</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Fill</strong>: Orange with glow shadow</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Behavior</strong>: Updates width as percentage of scroll (0-100%)</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Animation</strong>: Flowing particle pattern (repeating gradient, 0.8s loop)</li>
+</ul>
+<hr>
+<h2 class="font-semibold" node="[object Object]">🏠 <strong class="font-semibold" node="[object Object]">4. HERO SECTION</strong></h2>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Title</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Text</strong>: "Craft Digital Experiences" (3 words)</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Font</strong>: Ginjo display, 70-160px (responsive), 0.9 line-height</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Animation</strong>:
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Each word: Y-translate 100px + rotationX -90deg fade-in</li>
+<li node="[object Object]">Stagger: 0.2s between words</li>
+<li node="[object Object]">Easing: power3.out</li>
+</ul>
+</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Scramble Effect</strong>:
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Each word has <code class="text-text-500" node="[object Object]">data-scramble</code> attribute</li>
+<li node="[object Object]">Should scramble on scroll into view</li>
+<li node="[object Object]">Japanese translations: 創造 (Craft), デジタル (Digital), 体験 (Experiences)</li>
+</ul>
+</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Subtitle</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Text</strong>: "Web Developer · Creative Technologist · Digital Artist"</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Font</strong>: Space Grotesk, 16-20px, uppercase, 3px letter-spacing</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Animation</strong>: Opacity fade-in</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Scramble</strong>: Active on scroll</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">CTA Buttons</strong> (2 buttons)</h3>
+<ol class="list-decimal list-outside mb-2 space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Primary</strong>: "View Work"
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Orange border with glow</li>
+<li node="[object Object]">Orange overlay slides in on hover</li>
+<li node="[object Object]">Text → white on hover</li>
+<li node="[object Object]">Scrolls to #projects on click</li>
+</ul>
+</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Secondary</strong>: "Get in Touch"
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Black border</li>
+<li node="[object Object]">Black overlay slides in on hover</li>
+<li node="[object Object]">Text → white on hover</li>
+<li node="[object Object]">Scrolls to #contact on click</li>
+</ul>
+</li>
+</ol>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Shared Behavior</strong>:
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Scale 1.05 on hover (GSAP)</li>
+<li node="[object Object]">Translate up 3px</li>
+<li node="[object Object]">Overlay: left -100% → 0</li>
+<li node="[object Object]">Transition: 0.5s cubic-bezier(0.23, 1, 0.32, 1)</li>
+</ul>
+</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">3D Object Container</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Element</strong>: <code class="text-text-500" node="[object Object]">#hero-sphere</code> div</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Expected</strong>: Three.js scene integration</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Status</strong>: Container present, scene implementation needed</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Floating Particles</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Element</strong>: <code class="text-text-500" node="[object Object]">.floating-particles</code> div</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Expected</strong>: Particle system</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Status</strong>: Container present, no visual particles</li>
+</ul>
+<hr>
+<h2 class="font-semibold" node="[object Object]">🧘 <strong class="font-semibold" node="[object Object]">5. ABOUT SECTION (PHILOSOPHY)</strong></h2>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Title</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Text</strong>: "Philosophy"</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Japanese</strong>: 哲学</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Animation</strong>:
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Fade-in + translateY(50px) on scroll</li>
+<li node="[object Object]">GSAP ScrollTrigger (top 80%)</li>
+</ul>
+</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Paragraphs</strong> (3 total)</h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Content</strong>:
+<ol class="list-decimal list-outside mb-2 space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Web as canvas, intersection of art/code/UX</li>
+<li node="[object Object]">Challenge conventions, performant &amp; accessible</li>
+<li node="[object Object]">Japanese aesthetics: <em class="italic" node="[object Object]">ma</em>, <em class="italic" node="[object Object]">wabi-sabi</em>, <em class="italic" node="[object Object]">kanso</em></li>
+</ol>
+</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Font</strong>: Space Grotesk, 18px, line-height 2, centered</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Animation</strong>:
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">GSAP: Y-translate 50px fade-in</li>
+<li node="[object Object]">Stagger: 0.15s between paragraphs</li>
+<li node="[object Object]">Easing: power3.out</li>
+</ul>
+</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Emphasis</strong>: Orange italic text on Japanese terms</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Background</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Subtle black gradient (2% opacity)</li>
+</ul>
+<hr>
+<h2 class="font-semibold" node="[object Object]">💡 <strong class="font-semibold" node="[object Object]">6. SKILLS SECTION</strong></h2>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Title</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Text</strong>: "Core" / "Expertise" (2 lines)</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Japanese</strong>: 専門 / 技能</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Scramble</strong>: On hover (if <code class="text-text-500" node="[object Object]">data-scramble-hover</code>)</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Feature Cards</strong> (4 cards)</h3>
+<p node="[object Object]"><strong class="font-semibold" node="[object Object]">Card 1: 3D &amp; WebGL</strong></p>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Icon</strong>: Cube (data-icon="cube")</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Title</strong>: Japanese: 3D開発</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Description</strong>: Three.js, WebGL, GLSL shaders</li>
+</ul>
+<p node="[object Object]"><strong class="font-semibold" node="[object Object]">Card 2: Frontend Development</strong></p>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Icon</strong>: Sphere</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Title</strong>: Japanese: フロントエンド</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Description</strong>: React, Vue, vanilla JS</li>
+</ul>
+<p node="[object Object]"><strong class="font-semibold" node="[object Object]">Card 3: Animation &amp; Motion</strong></p>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Icon</strong>: Torus</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Title</strong>: Japanese: アニメーション</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Description</strong>: GSAP, Framer Motion, CSS</li>
+</ul>
+<p node="[object Object]"><strong class="font-semibold" node="[object Object]">Card 4: Creative Coding</strong></p>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Icon</strong>: Octahedron</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Title</strong>: Japanese: 創造的</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Description</strong>: Generative art, interactive installations</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Card Behaviors</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Scroll Animation</strong>:
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Y-translate 80px + opacity fade</li>
+<li node="[object Object]">Stagger 0.15s</li>
+<li node="[object Object]">power3.out easing</li>
+</ul>
+</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Tilt Effect</strong> (<code class="text-text-500" node="[object Object]">data-tilt</code>):
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">MouseMove tracks position</li>
+<li node="[object Object]">Calculates 3D rotation (rotateX/Y based on mouse)</li>
+<li node="[object Object]">Duration 0.5s, power2.out</li>
+<li node="[object Object]">Resets on mouse leave</li>
+</ul>
+</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Hover</strong>:
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Translate up 10px</li>
+<li node="[object Object]">Border → orange</li>
+<li node="[object Object]">Box-shadow with orange glow</li>
+<li node="[object Object]">Bottom accent line scales to full width</li>
+<li node="[object Object]">Orange gradient overlay (5% opacity)</li>
+</ul>
+</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Magnetic</strong>: Cursor attraction active</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">3D Icons</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Container</strong>: <code class="text-text-500" node="[object Object]">.icon-3d</code> with data-icon attribute</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Expected</strong>: Three.js shapes</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Status</strong>: Containers present, need 3D implementation</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Background</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Subtle orange gradient (2% opacity)</li>
+</ul>
+<hr>
+<h2 class="font-semibold" node="[object Object]">📁 <strong class="font-semibold" node="[object Object]">7. PROJECTS SECTION</strong></h2>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Layout</strong>: Two-column grid</h3>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Left Column</strong></h3>
+<p node="[object Object]"><strong class="font-semibold" node="[object Object]">Title</strong></p>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Text</strong>: "Selected" / "Projects"</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Japanese</strong>: 選ばれた / 作品</li>
+</ul>
+<p node="[object Object]"><strong class="font-semibold" node="[object Object]">Description</strong></p>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Curated selection paragraph</li>
+<li node="[object Object]">Font: 17px, line-height 2</li>
+</ul>
+<p node="[object Object]"><strong class="font-semibold" node="[object Object]">Stats</strong> (3 counters)</p>
+<ol class="list-decimal list-outside mb-2 space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">50</strong>: Projects Delivered</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">5</strong>: Years Experience</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">30</strong>: Happy Clients</li>
+</ol>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Animation</strong>:
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Counter counts up on scroll into view</li>
+<li node="[object Object]">Easing: easeOutQuart</li>
+<li node="[object Object]">Duration: 2000ms</li>
+<li node="[object Object]">Threshold: 0.5 visibility</li>
+<li node="[object Object]">Only triggers once (<code class="text-text-500" node="[object Object]">.counted</code> class)</li>
+</ul>
+</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Visual</strong>:
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Number: Ginjo 56px, orange</li>
+<li node="[object Object]">Label: Space Grotesk 13px uppercase, black</li>
+</ul>
+</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Right Column</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Container</strong>: <code class="text-text-500" node="[object Object]">#experience-visual</code></li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Expected</strong>: 3D visualization</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Visual</strong>: Border with orange glow, 500px height</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Parallax</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Entire visual container scrolls at different rate (-100px over section)</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Background</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Radial orange gradient (3% opacity)</li>
+</ul>
+<hr>
+<h2 class="font-semibold" node="[object Object]">🎨 <strong class="font-semibold" node="[object Object]">8. FEATURED WORK SECTION</strong></h2>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Title</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Text</strong>: "Featured" / "Work"</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Japanese</strong>: 特集 / 作品</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Gallery Grid</strong> (3 items, responsive)</h3>
+<p node="[object Object]"><strong class="font-semibold" node="[object Object]">Item 1</strong>: "Interactive WebGL Experience"
+<strong class="font-semibold" node="[object Object]">Item 2</strong>: "3D Product Configurator"
+<strong class="font-semibold" node="[object Object]">Item 3</strong>: "Generative Art Platform"</p>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Gallery Item Behaviors</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Scroll Animation</strong>:
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Scale 0.8 + opacity 0 fade-in</li>
+<li node="[object Object]">Stagger: 0.2s</li>
+<li node="[object Object]">back.out(1.7) easing</li>
+</ul>
+</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Background Gradients</strong> (portfolio-themed):
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Item 0: Orange 10% → Black 5%</li>
+<li node="[object Object]">Item 1: Black 8% → Orange 8%</li>
+<li node="[object Object]">Item 2: Orange 6% → Black 10%</li>
+</ul>
+</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Hover</strong>:
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Image wrapper scales 1.15</li>
+<li node="[object Object]">Duration: 0.6s power2.out</li>
+<li node="[object Object]">Label translates up 10px</li>
+</ul>
+</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Click</strong>: Scale pulse (0.95, yoyo, repeat 1)</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Magnetic</strong>: Active cursor attraction</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Labels</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Orange text, 22px Ginjo</li>
+<li node="[object Object]">Positioned bottom-left with shadow</li>
+<li node="[object Object]">Z-index 2</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Background</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Orange gradient (2% opacity)</li>
+</ul>
+<hr>
+<h2 class="font-semibold" node="[object Object]">📬 <strong class="font-semibold" node="[object Object]">9. CONTACT SECTION</strong></h2>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Title</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Text</strong>: "Let's Create" / "Together"</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Japanese</strong>: 作る / 一緒に</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Subtitle</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">"Have a project in mind? Let's collaborate..."</li>
+<li node="[object Object]">18px, uppercase, centered</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Form</strong> (4 elements)</h3>
+<p node="[object Object]"><strong class="font-semibold" node="[object Object]">Input 1</strong>: Name field
+<strong class="font-semibold" node="[object Object]">Input 2</strong>: Email field<br>
+<strong class="font-semibold" node="[object Object]">Input 3</strong>: Project textarea (5 rows)
+<strong class="font-semibold" node="[object Object]">Button</strong>: "Send Message" (primary orange style)</p>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Form Behaviors</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Scroll Animation</strong>:
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Each group: X-translate -50px + opacity fade</li>
+<li node="[object Object]">Stagger: 0.1s</li>
+<li node="[object Object]">power2.out easing</li>
+</ul>
+</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Focus State</strong>:
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Orange underline scales from 0 → full width</li>
+<li node="[object Object]">Duration: 0.5s power2.out</li>
+<li node="[object Object]">Bottom border → orange</li>
+</ul>
+</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Blur</strong>: Underline scales back to 0 if empty</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Submit</strong>:
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Button scale pulse (0.95, yoyo)</li>
+<li node="[object Object]">Text changes to "Sent! ✓"</li>
+<li node="[object Object]">Background → cyan (#00d4ff)</li>
+<li node="[object Object]">Form resets after 2s</li>
+</ul>
+</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Magnetic</strong>: All inputs attract cursor</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">3D Visual</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Container</strong>: <code class="text-text-500" node="[object Object]">#contact-visual</code></li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Position</strong>: Absolute right, 300x300px</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Expected</strong>: Three.js scene</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Background</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Radial orange gradient (5% opacity at 30% position)</li>
+</ul>
+<hr>
+<h2 class="font-semibold" node="[object Object]">🔻 <strong class="font-semibold" node="[object Object]">10. FOOTER</strong></h2>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Layout</strong>: Flexbox space-between</h3>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Left</strong>: Copyright text</h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">"© 2025 Dimokol. Crafting Digital Experiences."</li>
+<li node="[object Object]">13px, letter-spacing 1px</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Right</strong>: Social Links (3)</h3>
+<ol class="list-decimal list-outside mb-2 space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">GitHub</strong>: target="_blank"</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">LinkedIn</strong>: target="_blank"</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Email</strong>: mailto:<a class="text-text-300 underline hover:text-text-100" target="_blank" rel="noopener noreferrer" href="mailto:contact@dimokol.dev" node="[object Object]">contact@dimokol.dev</a></li>
+</ol>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Link Hover</strong>:</h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Text → orange</li>
+<li node="[object Object]">0.3s transition</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Background</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Transparent, no backdrop blur, no border</li>
+</ul>
+<hr>
+<h2 class="font-semibold" node="[object Object]">🌐 <strong class="font-semibold" node="[object Object]">11. GLOBAL EFFECTS</strong></h2>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Smooth Scrolling</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Library</strong>: Lenis</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Duration</strong>: 1.2s</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Easing</strong>: Custom (1.001 - pow(2, -10*t))</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Wheel multiplier</strong>: 1</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Touch</strong>: Disabled smooth, multiplier 2</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Integration</strong>: Synced with GSAP ticker</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Anchor Links</strong>: Smooth scroll with -100px offset</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Three.js Background</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Canvas</strong>: <code class="text-text-500" node="[object Object]">#webgl-canvas</code></li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Position</strong>: Fixed, full screen, z-index -1</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Expected</strong>: Dynamic 3D scene responding to cursor/scroll</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Module</strong>: ThreeScene class with cursor integration</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Section Separators</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Visual</strong>: Horizontal orange gradient line</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Width</strong>: Animates 0 → 60% on scroll</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Opacity</strong>: 0 → 0.3</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Trigger</strong>: When section enters top 80% of viewport</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Duration</strong>: 1s cubic-bezier(0.23, 1, 0.32, 1)</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Text Scramble System</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Trigger</strong>: Elements with <code class="text-text-500" node="[object Object]">[data-scramble]</code> on scroll into view</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Character Set</strong>: Symbols + Katakana (ｱｲｳ...)</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Behavior</strong>:
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Text clears on scroll out</li>
+<li node="[object Object]">Scrambles on scroll in (150ms delay)</li>
+<li node="[object Object]">Random character reveal with timing queue</li>
+<li node="[object Object]">Japanese translation on hover (if <code class="text-text-500" node="[object Object]">data-scramble-hover</code>)</li>
+</ul>
+</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Hover Mode</strong>:
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Shows Japanese for 1.5s</li>
+<li node="[object Object]">Returns to English on mouse leave</li>
+</ul>
+</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">Colors</strong>: Orange scramble characters, 80% opacity</li>
+</ul>
+<hr>
+<h2 class="font-semibold" node="[object Object]">⚡ <strong class="font-semibold" node="[object Object]">12. PERFORMANCE FEATURES</strong></h2>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Will-Change Hints</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Cursor elements: transform</li>
+<li node="[object Object]">Feature cards, gallery items, buttons: transform</li>
+<li node="[object Object]">Hero words, title lines, about paragraphs: opacity, transform</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Font Preloading</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Ginjo-Regular.woff2</li>
+<li node="[object Object]">Asakusa.woff</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Resource Preconnect</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Google Fonts</li>
+<li node="[object Object]">fonts.gstatic.com</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Reduced Motion</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">All animations → 0.01ms duration</li>
+<li node="[object Object]">Cursor hidden, default cursor shown</li>
+<li node="[object Object]">Scroll behavior → auto</li>
+<li node="[object Object]">Cursor rotation disabled</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Responsive Breakpoints</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">1024px</strong>: Single column layouts, simplified grid</li>
+<li node="[object Object]"><strong class="font-semibold" node="[object Object]">768px</strong>:
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Smaller padding (60px → 30px)</li>
+<li node="[object Object]">Vertical button layout</li>
+<li node="[object Object]">Hidden custom cursor (mobile)</li>
+<li node="[object Object]">Smaller nav text (11px)</li>
+<li node="[object Object]">Vertical stats layout</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 class="font-semibold" node="[object Object]">🏷️ <strong class="font-semibold" node="[object Object]">13. SEO &amp; META</strong></h2>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Title: "Dimokol - Web Developer &amp; Creative Technologist"</li>
+<li node="[object Object]">Description: Portfolio specializing in 3D, WebGL, creative experiences</li>
+<li node="[object Object]">Keywords: web developer, creative technologist, webgl, three.js</li>
+<li node="[object Object]">Author: Dimokol</li>
+<li node="[object Object]">Open Graph: type, title, description</li>
+<li node="[object Object]">Language: en</li>
+</ul>
+<hr>
+<h2 class="font-semibold" node="[object Object]">🎭 <strong class="font-semibold" node="[object Object]">14. EXPECTED BUT NOT VISIBLE</strong></h2>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Three.js Integration</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Hero sphere</li>
+<li node="[object Object]">Experience visual</li>
+<li node="[object Object]">Contact visual</li>
+<li node="[object Object]">Icon 3D shapes (cube, sphere, torus, octahedron)</li>
+<li node="[object Object]">Background canvas scene</li>
+</ul>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Floating Particles</strong></h3>
+<ul class="list-disc list-outside space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">Hero section particle system</li>
+</ul>
+<hr>
+<h2 class="font-semibold" node="[object Object]">⚠️ <strong class="font-semibold" node="[object Object]">15. POTENTIAL ISSUES TO TEST</strong></h2>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Critical</strong></h3>
+<ol class="list-decimal list-outside mb-2 space-y-1 ml-6" node="[object Object]">
+<li node="[object Object]">✅ Cursor banner visibility (FIXED)</li>
+<li node="[object Object]">⚠️ Cursor blend mode on all backgrounds</li>
+<li node="[object Object]">⚠️ Three.js scenes not rendering</li>
+<li node="[object Object]">⚠️ 3D icons not displaying</li>
+</ol>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">High Priority</strong></h3>
+<ol class="list-decimal list-outside mb-2 space-y-1 ml-6" start="5" node="[object Object]">
+<li node="[object Object]">⚠️ Text scramble triggering properly</li>
+<li node="[object Object]">⚠️ Counter animations activating</li>
+<li node="[object Object]">⚠️ Magnetic cursor attraction strength</li>
+<li node="[object Object]">⚠️ Tilt effects on cards</li>
+<li node="[object Object]">⚠️ Smooth scroll anchor navigation</li>
+</ol>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Medium Priority</strong></h3>
+<ol class="list-decimal list-outside mb-2 space-y-1 ml-6" start="10" node="[object Object]">
+<li node="[object Object]">⚠️ Glitch effect on logo</li>
+<li node="[object Object]">⚠️ Section separators revealing</li>
+<li node="[object Object]">⚠️ Form submission animation</li>
+<li node="[object Object]">⚠️ Japanese text hover swap</li>
+<li node="[object Object]">⚠️ Parallax on experience section</li>
+<li node="[object Object]">⚠️ Gallery gradient backgrounds</li>
+</ol>
+<h3 class="font-semibold" node="[object Object]"><strong class="font-semibold" node="[object Object]">Visual Polish</strong></h3>
+<ol class="list-decimal list-outside mb-2 space-y-1 ml-6" start="16" node="[object Object]">
+<li node="[object Object]">⚠️ Button overlay slide animation</li>
+<li node="[object Object]">⚠️ Input underline expansion</li>
+<li node="[object Object]">⚠️ Card bottom accent line</li>
+<li node="[object Object]">⚠️ Progress bar particle flow</li>
+<li node="[object Object]">⚠️ Click ripple expansion</li>
+</ol>
+<hr>

@@ -67,7 +67,7 @@ npm run build
 npm run preview
 ```
 
-The development server will start at `http://localhost:3000`
+The development server will start at `http://localhost:3014`
 
 ## 📁 Project Structure
 
