@@ -1,6 +1,8 @@
 // Enhanced Magnetic Cursor with Multiple Effects
 // Idle animations, magnetic attraction, and interactive tricks
 
+import { gsap } from 'gsap';
+
 export class CustomCursor {
     constructor() {
         this.cursor = document.querySelector('.cursor');
@@ -31,6 +33,9 @@ export class CustomCursor {
         this.isAtCorner = false;
         this.edgePosition = null; // 'top', 'bottom', 'left', 'right', 'top-left', etc.
         this.lastMoveTime = Date.now();
+        this.idleStartX = 0;
+        this.idleStartY = 0;
+        this.transitioningFromIdle = false; // Track if we're transitioning but haven't moved enough yet
 
         // Banner rotation tracking for smooth transitions
         this.bannerRotation = 0;
@@ -42,9 +47,10 @@ export class CustomCursor {
         this.idleParticles = [];
         this.trailParticles = [];
         this.maxParticles = 15;
-        this.trailSpawnTimer = 0;
-        this.trailSpawnInterval = 30; // ms between trail dots
-        this.lastTrailSpawn = Date.now();
+        // Distance-based trail spawning for consistent spacing
+        this.trailSpawnDistance = 15; // pixels between trail dots
+        this.lastTrailX = this.mouseX;
+        this.lastTrailY = this.mouseY;
         this.idleDotsToRemove = []; // Queue of idle dots to remove sequentially
 
         // Create a container for trail dots that shares the same blend mode as cursor
@@ -247,24 +253,62 @@ export class CustomCursor {
             }
 
             const wasIdle = this.isIdle;
+            const wasAtEdge = this.isAtEdge;
             this.lastMoveTime = Date.now();
-            this.isIdle = false;
-            this.idleTime = 0;
 
-            // If transitioning from idle to moving, prepare to remove idle dots sequentially
+            // If transitioning from idle, mark it and store the edge state
             if (wasIdle) {
-                // All idle dots are candidates for removal as trail dots spawn
-                this.idleDotsToRemove = [...this.idleParticles.filter(p => p.active)];
+                this.transitioningFromIdle = true;
+                this.transitionEdgeState = wasAtEdge; // Store whether we were at edge
+                this.isIdle = false;
+                this.idleTime = 0;
+            }
+
+            // Check if we've moved enough distance from idle position to calculate direction
+            if (this.transitioningFromIdle) {
+                const dx = e.clientX - this.idleStartX;
+                const dy = e.clientY - this.idleStartY;
+                const distanceMoved = Math.sqrt(dx * dx + dy * dy);
+
+                // Only calculate direction once we've moved at least 20 pixels
+                if (distanceMoved >= 20) {
+                    const movementAngle = Math.atan2(dy, dx);
+
+                    // If we were at an edge, detach idle dots and leave them behind
+                    if (this.transitionEdgeState) {
+                        this.detachIdleParticles();
+                    } else {
+                        // Normal idle (circular): remove dots starting from opposite of movement direction
+                        // Add π to get opposite direction (180 degrees)
+                        let oppositeAngle = movementAngle + Math.PI;
+
+                        // Normalize to [-π, π] range to match atan2 output
+                        if (oppositeAngle > Math.PI) {
+                            oppositeAngle -= Math.PI * 2;
+                        }
+
+                        this.prepareDirectionalRemoval(oppositeAngle);
+                    }
+
+                    // Reset trail spawn position to current cursor position
+                    this.lastTrailX = this.mouseX;
+                    this.lastTrailY = this.mouseY;
+                    this.transitioningFromIdle = false;
+                }
             }
         });
 
         // Find all magnetic elements (interactive elements with physics-based attraction)
-        const magneticSelectors = 'a, button, .feature-card, .gallery-item, .nav-link, .cta-button, .form-input, [data-magnetic]';
+        const magneticSelectors = 'a, button, .feature-card, .gallery-item, .nav-logo, .nav-link, .cta-button, .form-input, [data-magnetic]';
         const magneticElements = document.querySelectorAll(magneticSelectors);
 
         magneticElements.forEach(el => {
             // Store reference for magnetic effects
             this.magneticElements.push(el);
+
+            // Create quickTo functions for smooth, performant updates
+            const quickX = gsap.quickTo(el, 'x', {duration: 0.5, ease: 'power3.out'});
+            const quickY = gsap.quickTo(el, 'y', {duration: 0.5, ease: 'power3.out'});
 
             el.addEventListener('mouseenter', () => {
                 this.cursor.classList.add('hover');
@@ -305,14 +349,14 @@ export class CustomCursor {
                 this.hideCursorText();
 
                 el.dataset.magneticActive = 'false';
-                // Reset element position smoothly
-                if (el.style.transform) {
-                    el.style.transition = 'transform 0.5s cubic-bezier(0.23, 1, 0.32, 1)';
-                    el.style.transform = '';
-                    setTimeout(() => {
-                        el.style.transition = '';
-                    }, 500);
-                }
+
+                // Reset element position smoothly using GSAP
+                gsap.to(el, {
+                    x: 0,
+                    y: 0,
+                    duration: 0.5,
+                    ease: 'power3.out'
+                });
             });
 
             // Track mouse movement over magnetic elements for distortion effect
@@ -325,9 +369,10 @@ export class CustomCursor {
                     const deltaX = e.clientX - centerX;
                     const deltaY = e.clientY - centerY;
 
-                    // Apply subtle distortion to the element itself
+                    // Apply subtle distortion using GSAP (preserves other transforms)
                     const strength = 0.2;
-                    el.style.transform = `translate(${deltaX * strength}px, ${deltaY * strength}px)`;
+                    quickX(deltaX * strength);
+                    quickY(deltaY * strength);
                 }
             });
         });
@@ -358,6 +403,9 @@ export class CustomCursor {
         const timeSinceMove = Date.now() - this.lastMoveTime;
         if (timeSinceMove > 2000 && !this.isIdle) {
             this.isIdle = true;
+            // Store position where idle started
+            this.idleStartX = this.mouseX;
+            this.idleStartY = this.mouseY;
             if (this.isAtEdge) {
                 this.startEdgeIdleAnimation();
             } else {
@@ -507,6 +555,107 @@ export class CustomCursor {
                 if (this.isIdle && this.isAtEdge) this.startEdgeIdleAnimation();
             });
         }
+    }
+
+    prepareDirectionalRemoval(movementAngle) {
+        // Remove dots starting from the direction of movement, going clockwise
+        const activeParticles = this.idleParticles.filter(p => p.active);
+
+        if (activeParticles.length === 0) return;
+
+        // Calculate angle for each particle from cursor center
+        const cursorCenterX = 45;
+        const cursorCenterY = 45;
+
+        const particlesWithAngles = activeParticles.map(particle => {
+            // Calculate particle angle relative to cursor center
+            const dx = particle.x + 2 - cursorCenterX; // +2 to account for particle center
+            const dy = particle.y + 2 - cursorCenterY;
+            let particleAngle = Math.atan2(dy, dx);
+
+            // Calculate angular distance from movement direction (going clockwise)
+            let angleDiff = particleAngle - movementAngle;
+
+            // Normalize to [0, 2π] range to ensure clockwise ordering
+            if (angleDiff < 0) angleDiff += Math.PI * 2;
+
+            return { particle, angleDiff };
+        });
+
+        // Sort by angular distance (clockwise from movement direction)
+        particlesWithAngles.sort((a, b) => a.angleDiff - b.angleDiff);
+
+        // Set removal queue in order
+        this.idleDotsToRemove = particlesWithAngles.map(p => p.particle);
+    }
+
+    detachIdleParticles() {
+        // Convert idle particles from cursor-relative to fixed-position
+        // so they stay in place when cursor moves away
+        // Remove them sequentially from first to last (following animation flow)
+        const activeParticles = this.idleParticles.filter(p => p.active);
+
+        activeParticles.forEach((particle, index) => {
+            // Calculate current screen position
+            const rect = particle.element.getBoundingClientRect();
+            const screenX = rect.left;
+            const screenY = rect.top;
+
+            // Remove from cursor element
+            particle.element.remove();
+
+            // Create a new fixed particle at the same screen position
+            const fixedParticle = document.createElement('div');
+            fixedParticle.className = 'cursor-particle idle-detached';
+            fixedParticle.style.cssText = `
+                position: fixed;
+                width: 4px;
+                height: 4px;
+                background: rgb(255, 255, 255);
+                border-radius: 50%;
+                pointer-events: none;
+                left: ${screenX}px;
+                top: ${screenY}px;
+                opacity: ${particle.element.style.opacity};
+                transition: opacity 0.3s ease;
+            `;
+
+            // Add to trail container (has same mix-blend-mode as cursor)
+            this.trailContainer.appendChild(fixedParticle);
+
+            // Sequential fade out - each dot fades after the previous one
+            const sequentialDelay = index * 40; // 40ms between each dot
+            setTimeout(() => {
+                fixedParticle.style.opacity = '0';
+                setTimeout(() => {
+                    fixedParticle.remove();
+                }, 300);
+            }, 200 + sequentialDelay); // Start fading after 200ms + sequential delay
+
+            // Mark particle as inactive
+            particle.active = false;
+            particle.element.style.opacity = '0';
+        });
+
+        // Recreate idle particles for future use
+        this.idleParticles.forEach((particle) => {
+            const newParticle = document.createElement('div');
+            newParticle.className = 'cursor-particle idle';
+            newParticle.style.cssText = `
+                position: absolute;
+                width: 4px;
+                height: 4px;
+                background: rgb(255, 255, 255);
+                border-radius: 50%;
+                pointer-events: none;
+                opacity: 0;
+                transition: opacity 0.2s ease;
+                z-index: -1;
+            `;
+            this.cursor.appendChild(newParticle);
+            particle.element = newParticle;
+            particle.active = false;
+        });
     }
 
     spawnTrailDot() {
@@ -678,12 +827,17 @@ export class CustomCursor {
         this.cursorTrail.style.left = `${this.trailX}px`;
         this.cursorTrail.style.top = `${this.trailY}px`;
 
-        // Spawn trail dots when moving (not idle)
-        if (!this.isIdle && this.mouseSpeed > 1) {
-            const now = Date.now();
-            if (now - this.lastTrailSpawn >= this.trailSpawnInterval) {
+        // Spawn trail dots based on distance traveled (ensures consistent spacing)
+        if (!this.isIdle && this.mouseSpeed > 0.5) {
+            const dx = this.cursorX - this.lastTrailX;
+            const dy = this.cursorY - this.lastTrailY;
+            const distanceTraveled = Math.sqrt(dx * dx + dy * dy);
+
+            // Spawn a new dot when cursor has moved the spawn distance
+            if (distanceTraveled >= this.trailSpawnDistance) {
                 this.spawnTrailDot();
-                this.lastTrailSpawn = now;
+                this.lastTrailX = this.cursorX;
+                this.lastTrailY = this.cursorY;
             }
         }
 

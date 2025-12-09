@@ -22,7 +22,7 @@ export class ScrollAnimations {
     onScroll() {
         this.updateProgressBar();
         this.revealElements();
-        this.animateOnScroll();
+        // Removed animateOnScroll() - causes transform conflicts with GSAP animations
 
         // Trigger callbacks for other modules
         const scrollProgress = window.scrollY / (document.body.scrollHeight - window.innerHeight);

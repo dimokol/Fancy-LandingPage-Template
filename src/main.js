@@ -70,6 +70,11 @@ class EtherealVoid {
         // Initialize tilt effects
         this.initTiltEffects();
 
+        // Refresh ScrollTrigger after everything is initialized
+        setTimeout(() => {
+            ScrollTrigger.refresh();
+        }, 100);
+
         console.log('✨ Ethereal Void - Ready');
     }
 
@@ -108,11 +113,18 @@ class EtherealVoid {
     }
 
     initGSAPAnimations() {
+        // Configure ScrollTrigger for better performance with Lenis
+        ScrollTrigger.config({
+            ignoreMobileResize: true,
+            autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load'
+        });
+
         // Hero text animation with stagger
         gsap.from('.hero-title .word', {
             scrollTrigger: {
                 trigger: '.hero-section',
                 start: 'top center',
+                once: true
             },
             y: 100,
             opacity: 0,
@@ -127,6 +139,7 @@ class EtherealVoid {
             scrollTrigger: {
                 trigger: '.about-section',
                 start: 'top 80%',
+                once: true
             },
             y: 50,
             opacity: 0,
@@ -140,6 +153,8 @@ class EtherealVoid {
             scrollTrigger: {
                 trigger: '.features-section',
                 start: 'top 80%',
+                once: true, // Prevent retriggering
+                toggleActions: 'play none none none'
             },
             y: 80,
             opacity: 0,
@@ -156,6 +171,7 @@ class EtherealVoid {
                 scrollTrigger: {
                     trigger: title,
                     start: 'top 80%',
+                    once: true
                 },
                 y: 100,
                 opacity: 0,
@@ -182,6 +198,7 @@ class EtherealVoid {
             scrollTrigger: {
                 trigger: '.gallery-section',
                 start: 'top 80%',
+                once: true
             },
             scale: 0.8,
             opacity: 0,
@@ -195,6 +212,7 @@ class EtherealVoid {
             scrollTrigger: {
                 trigger: '.contact-form',
                 start: 'top 80%',
+                once: true
             },
             x: -50,
             opacity: 0,
@@ -232,24 +250,7 @@ class EtherealVoid {
             });
         });
 
-        // Nav links hover effect
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('mouseenter', () => {
-                gsap.to(link, {
-                    x: 5,
-                    duration: 0.3,
-                    ease: 'power2.out'
-                });
-            });
-
-            link.addEventListener('mouseleave', () => {
-                gsap.to(link, {
-                    x: 0,
-                    duration: 0.3,
-                    ease: 'power2.out'
-                });
-            });
-        });
+        // Nav links hover effect - removed, magnetic cursor handles interaction
     }
 
     initFormInteractions() {

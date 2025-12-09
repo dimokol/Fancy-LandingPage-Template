@@ -215,6 +215,7 @@ body {
     color: var(--matte-black);
     transition: transform 0.3s ease;
     cursor: none;
+    text-decoration: none;
 }
 
 .nav-logo:hover {
@@ -271,6 +272,7 @@ body {
     position: relative;
     transition: color 0.3s ease;
     font-family: var(--font-accent);
+    cursor: none;
 }
 
 .nav-link::after {
@@ -610,7 +612,7 @@ body {
 }
 
 .feature-card:hover {
-    transform: translateY(-10px);
+    /* Removed transform - magnetic cursor handles movement */
     border-color: var(--vibrant-orange);
     box-shadow: 0 20px 60px rgba(255, 107, 53, 0.2);
 }
@@ -888,6 +890,7 @@ body {
     transition: color 0.3s ease;
     letter-spacing: 1px;
     font-family: var(--font-accent);
+    cursor: none;
 }
 
 .footer-link:hover {

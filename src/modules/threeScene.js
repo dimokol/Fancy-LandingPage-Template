@@ -197,16 +197,22 @@ export class ThreeScene {
                     );
 
                     // Store animation data with rotation speeds
+                    // Each shape rotates on only ONE axis (randomly chosen)
+                    const rotationAxis = Math.floor(Math.random() * 3); // 0=x, 1=y, 2=z
+                    const rotationDirection = Math.random() > 0.5 ? 1 : -1; // Random direction
+                    const rotationSpeed = 0.003 * rotationDirection; // Same speed for all
+
                     const baseSpeed = {
-                        x: (Math.random() - 0.5) * 0.003,
-                        y: (Math.random() - 0.5) * 0.003,
-                        z: (Math.random() - 0.5) * 0.003
+                        x: rotationAxis === 0 ? rotationSpeed : 0,
+                        y: rotationAxis === 1 ? rotationSpeed : 0,
+                        z: rotationAxis === 2 ? rotationSpeed : 0
                     };
                     instances.push({
                         mesh: clone,
                         originalPosition: clone.position.clone(),
                         originalRotation: clone.rotation.clone(),
                         floatOffset: Math.random() * Math.PI * 2,
+                        rotationAxis: rotationAxis, // Store which axis this shape rotates on
                         baseRotationSpeed: baseSpeed,
                         currentRotationSpeed: {
                             x: baseSpeed.x,
@@ -266,16 +272,22 @@ export class ThreeScene {
                     Math.random() * Math.PI * 2
                 );
 
+                // Each shape rotates on only ONE axis (randomly chosen)
+                const rotationAxis = Math.floor(Math.random() * 3); // 0=x, 1=y, 2=z
+                const rotationDirection = Math.random() > 0.5 ? 1 : -1; // Random direction
+                const rotationSpeed = 0.003 * rotationDirection; // Same speed for all
+
                 const baseSpeed = {
-                    x: (Math.random() - 0.5) * 0.003,
-                    y: (Math.random() - 0.5) * 0.003,
-                    z: (Math.random() - 0.5) * 0.003
+                    x: rotationAxis === 0 ? rotationSpeed : 0,
+                    y: rotationAxis === 1 ? rotationSpeed : 0,
+                    z: rotationAxis === 2 ? rotationSpeed : 0
                 };
                 instances.push({
                     mesh: shape,
                     originalPosition: shape.position.clone(),
                     originalRotation: shape.rotation.clone(),
                     floatOffset: Math.random() * Math.PI * 2,
+                    rotationAxis: rotationAxis, // Store which axis this shape rotates on
                     baseRotationSpeed: baseSpeed,
                     currentRotationSpeed: {
                         x: baseSpeed.x,
@@ -384,12 +396,14 @@ export class ThreeScene {
 
             const geometry = new THREE.BufferGeometry().setFromPoints(curvePoints);
 
-            // Use TubeGeometry for rounded appearance instead of flat lines
-            const tubeGeometry = new THREE.TubeGeometry(curve, 100, 0.015, 8, false);
-            const material = new THREE.MeshBasicMaterial({
+            // Use TubeGeometry for rounded appearance instead of flat lines (thinner)
+            const tubeGeometry = new THREE.TubeGeometry(curve, 100, 0.008, 8, false);
+            const material = new THREE.MeshStandardMaterial({
                 color: 0xff6b35,
+                emissive: 0xff6b35,  // Orange glow
+                emissiveIntensity: 0.8,
                 transparent: true,
-                opacity: 0.05 + Math.random() * 0.1
+                opacity: 0.2 + Math.random() * 0.15
             });
 
             const tube = new THREE.Mesh(tubeGeometry, material);
@@ -639,8 +653,8 @@ export class ThreeScene {
 
         // Animate ambient lines - ONLY rotate on Y axis, faster speed
         this.objects.ambientLines.forEach((line, index) => {
-            // Rotate around Y axis only - faster speed
-            line.rotation.y += line.userData.rotationSpeed * 3;
+            // Rotate around Y axis only - much faster speed
+            line.rotation.y += line.userData.rotationSpeed * 6;
 
             // Move upward continuously
             line.userData.initialY += line.userData.verticalSpeed;
